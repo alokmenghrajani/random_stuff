@@ -1,0 +1,8 @@
+* sqrt_algo.php:
+
+Most people don't know that there exists an algorithm to calculate square root numbers,
+which can be used on paper/pen. It's similar to long divisions, and was first documented
+by Fibonnaci in 1202.
+
+This is a simple php implementation.
+
