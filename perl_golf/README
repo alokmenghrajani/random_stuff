@@ -1,0 +1,19 @@
+"Find the shortest (fewest keystrokes) Perl code to solve a given problem."
+
+roman_to_numeral: Convert a roman numeral into the numerical value and print it.
+
+* input will be provided as an argument to the program
+* output must go to stdout
+* roman numerals will always be upper-case and well formed. For example, 4 will
+  always be written IV.
+
+Roman Numerals:
+I = 1           V = 5
+X = 10          L = 50
+C = 100         D = 500
+M = 1000
+
+Example:
+IV = 4
+XII = 12
+MCMLIX = 1959
