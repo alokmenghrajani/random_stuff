@@ -58,7 +58,10 @@ start(uri:Uri.relative):resource = (
         <script src="resources/ctrl_v.js"></script>
       </>
     )
-  | {~path ... } -> display_image(List.head(path))
+  | {~path ... } -> match List.head(path)
+    | "favicon.ico" -> @static_resource("resources/favicon.png")
+    | "favicon.gif" -> @static_resource("resources/favicon.png")
+    | img -> display_image(img)
 )
 
 server = Server.of_bundle([@static_include_directory("resources")])
