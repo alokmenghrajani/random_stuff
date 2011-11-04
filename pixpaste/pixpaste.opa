@@ -11,11 +11,7 @@ db /pixels : intmap(pixel)
 upload_data():void = (
   key = Db.fresh_key(@/pixels)
   do /pixels[key] <- {id=key; data=Dom.get_value(#img_data)}
-  Client.go(Uri.of_absolute({Uri.default_absolute with
-    schema = {some = "http"}
-    domain = "localhost"
-    port = {some = 8080}
-    path = [Int.to_string(key)]}))
+  Client.goto("/{key}")
 )
 
 display(body):resource = (
