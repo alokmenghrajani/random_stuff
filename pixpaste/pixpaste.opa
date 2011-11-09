@@ -45,12 +45,14 @@ start(uri:Uri.relative):resource = (
   match uri
   | {path=[] ...} -> display(
       <>
-        <div class="page-header"><h1>Just hit ctrl-v <small>to share an image</small></h1></div>
-        <p>Hint: use cmd-control-shift-4 to copy a part of the screen to the clipboard</p>
-        <input id=#img_data type="text" class="hidden"/>
-        <div class="alert-message error" id=#error style="display: none"/>
-        <div><img id=#preview class="preview" src="resources/preview.png"/></div>
-        <div><input id=#btn type="button" class="btn" onclick={_ -> upload_data()} value="Upload"/></div>
+        <section>
+          <div class="page-header"><h1>Just hit ctrl-v <small>to share an image</small></h1></div>
+          <p>Hint: use cmd-control-shift-4 to copy a part of the screen to the clipboard</p>
+          <input id=#img_data type="text" class="hidden"/>
+          <div class="alert-message error" id=#error style="display: none"/>
+          <div><img id=#preview class="preview" src="resources/preview.png"/></div>
+          <div><input id=#btn type="button" class="btn" onclick={_ -> upload_data()} value="Upload"/></div>
+        </section>
         <script src="resources/ctrl_v.js"></script>
       </>
     )
