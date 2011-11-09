@@ -35,9 +35,13 @@ display(body):resource = (
 )
 
 display_image(path:string):resource = (
-  p = /pixels[Int.of_string(path)]
+  id:int = Int.of_string(path)
+  p = /pixels[id]
   display(
-    <><img class="preview" src={p.data}/></>
+    <>
+      <img class="preview" src={p.data}/>
+      <p>Share this link: <a href="http://pixpaste.quaxio.com:8080/{id}">http://pixpaste.quaxio.com:8080/{id}</a></p>
+    </>
   )
 )
 
