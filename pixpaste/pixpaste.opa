@@ -30,6 +30,14 @@ display(body):resource = (
     </div>
     <div class="container">{body}</div>
     <br/>
+    <footer class="footer">
+      <div class="container">
+        <p>Designed and built using <a href="http://www.opalang.org">opa</a>.
+          Code available on <a href="http://github.com/alokmenghrajani/random_stuff/tree/master/pixpaste">github.com</a>.<br/>
+          <a href="http://goo.gl/mod/G7PK">Suggest improvements!</a>
+        </p>
+      </div>
+    </footer>
     </>
   )
 )
