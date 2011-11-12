@@ -1,5 +1,6 @@
 import stdlib.themes.bootstrap
 import stdlib.web.client
+import stdlib.crypto
 
 type pixel = {
   id : int;
@@ -42,12 +43,20 @@ display(body):resource = (
   )
 )
 
-display_image(path:string):resource = (
-  id:int = Int.of_string(path)
+display_raw_image(id:int):resource = (
+  p = /pixels[id]
+
+  // TODO: fix this ugly hack :(
+  data = String.sub(22, String.length(p.data)-22, p.data)
+  data = Crypto.Base64.decode(data)
+  Resource.raw_response(data, "image/png", {success})
+)
+
+display_image(id:int):resource = (
   p = /pixels[id]
   display(
     <>
-      <img class="preview" src={p.data}/>
+      <img class="preview" src="/img/{p.id}"/>
       <p>Share this link: <a href="http://pixpaste.quaxio.com:8080/{id}">http://pixpaste.quaxio.com:8080/{id}</a></p>
     </>
   )
@@ -96,11 +105,11 @@ display_pixpaste():resource = (
 
 start(uri:Uri.relative):resource = (
   match uri
-  | {path=[] ...} -> display_home()
-  | {~path ... } -> match List.head(path)
-    | "favicon.ico" -> @static_resource("resources/favicon.png")
-    | "favicon.gif" -> @static_resource("resources/favicon.png")
-    | img -> display_image(img)
+  | {path={nil} ...} -> display_home()
+  | {path={hd="favicon.ico" ...} ...} -> @static_resource("resources/favicon.png")
+  | {path={hd="favicon.gif" ...} ...} -> @static_resource("resources/favicon.png")
+  | {path={hd="img" tl={~hd ...} ...} ...} -> display_raw_image(Int.of_string(hd))
+  | {path={~hd ...} ...} -> display_image(Int.of_string(hd))
 )
 
 server = Server.of_bundle([@static_include_directory("resources")])
