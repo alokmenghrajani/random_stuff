@@ -114,8 +114,8 @@ display_image(id:int):resource = (
 
 display_home():resource = (
   match HttpRequest.get_user_agent()
-    | {some={renderer={Gecko=...} ...}} -> display_pixpaste()
-    | {some={renderer={Webkit=... variant={Chrome=...}} ...}} -> display_pixpaste()
+    | {some={renderer={~Gecko} ...}} -> display_pixpaste()
+    | {some={renderer={~Webkit variant={~Chrome}} ...}} -> display_pixpaste()
     | _ -> display(
       <>
         <h1>Sorry, your browser is not supported</h1>
