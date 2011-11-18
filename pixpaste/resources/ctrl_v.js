@@ -3,7 +3,7 @@ if (navigator.userAgent.indexOf('Firefox') != -1) {
   document.body.appendChild(e);
   e.id = 'editor';
   e.contentEditable = true;
-  e.style.position = 'absolute';
+  e.style.position = 'fixed';
   e.style.left = '-10000px';
   e.style.top = '0px';
 
