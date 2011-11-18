@@ -4,7 +4,7 @@ import stdlib.crypto
 
 type pixel = {
   id : int;
-  data : string;
+  data : intmap(string);
   secret : string;
 }
 
@@ -35,7 +35,7 @@ upload_data():void = (
         if i == 0 then
           upload_first_piece(piece)
         else
-          do upload_next_piece(info.id, info.secret, piece)
+          do upload_next_piece(info.id, info.secret, i, piece)
           info
       else
         info
@@ -47,17 +47,19 @@ upload_data():void = (
   Client.goto("/{info.id}")
 )
 
-upload_first_piece(data:string):upload_info = (
+upload_first_piece(piece:string):upload_info = (
   id:int = Db.fresh_key(@/pixels)
   secret:string = Random.string(10)
+  data:intmap = Map.empty
+  data = Map.add(0, piece, data)
   do /pixels[id] <- {id=id; data=data; secret=secret}
   {id=id; secret=secret}
 )
 
-upload_next_piece(id:int, secret:string, data:string):void = (
+upload_next_piece(id:int, secret:string, offset: int, piece:string):void = (
   pixel:pixel = /pixels[id]
   if (pixel.secret == secret) then
-    /pixels[id] <- {id=id; data=String.concat("", [pixel.data, data]); secret=secret}
+    /pixels[id]/data[offset] <- piece
   else
     do Debug.warning("secret mismatch: {secret} != {pixel.secret}")
     void
@@ -96,7 +98,8 @@ display_raw_image(id:int):resource = (
   p = /pixels[id]
 
   // TODO: fix this ugly hack :(
-  data = String.sub(22, String.length(p.data)-22, p.data)
+  data:string = Map.fold((k, v, r -> String.concat("", [r, v])), p.data, "")
+  data = String.sub(22, String.length(data)-22, data)
   data = Crypto.Base64.decode(data)
   Resource.raw_response(data, "image/png", {success})
 )
