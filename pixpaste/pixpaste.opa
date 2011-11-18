@@ -105,7 +105,11 @@ display_raw_image(id:int):resource = (
 )
 
 display_image(id:int):resource = (
-  p = /pixels[id]
+  p =
+    if (Db.exists(@/pixels[id])) then
+      /pixels[id]
+    else
+      /pixels[0]
 
   display(
     <>
