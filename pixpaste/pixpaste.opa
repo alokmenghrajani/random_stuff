@@ -3,17 +3,16 @@ import stdlib.web.client
 import stdlib.crypto
 
 type pixel = {
-  id : int;
   data : intmap(string);
   secret : string;
 }
 
 type upload_info = {
-  id : int;
+  id : string;
   secret : string;
 }
 
-db /pixels : intmap(pixel)
+db /pixels : stringmap(pixel)
 
 upload_data():void = (
   // connect to server and send first piece of data
@@ -41,22 +40,24 @@ upload_data():void = (
         info
     ),
     List.init_stable(x -> x, 100),
-    {id=0; secret=""})
+    {id=""; secret=""})
 
   do Dom.set_text(#progress, "100%")
   Client.goto("/{info.id}")
 )
 
 upload_first_piece(piece:string):upload_info = (
-  id:int = Db.fresh_key(@/pixels)
+  // TODO: handle collision!
+  // TODO: increase range of characters
+  id:string = Random.string(4)
   secret:string = Random.string(10)
   data:intmap = Map.empty
   data = Map.add(0, piece, data)
-  do /pixels[id] <- {id=id; data=data; secret=secret}
-  {id=id; secret=secret}
+  do /pixels[id] <- {~data ~secret}
+  {~id ~secret}
 )
 
-upload_next_piece(id:int, secret:string, offset: int, piece:string):void = (
+upload_next_piece(id:string, secret:string, offset: int, piece:string):void = (
   pixel:pixel = /pixels[id]
   if (pixel.secret == secret) then
     /pixels[id]/data[offset] <- piece
@@ -94,7 +95,7 @@ display(body):resource = (
   )
 )
 
-display_raw_image(id:int):resource = (
+display_raw_image(id:string):resource = (
   p = /pixels[id]
 
   // TODO: fix this ugly hack :(
@@ -104,16 +105,17 @@ display_raw_image(id:int):resource = (
   Resource.raw_response(data, "image/png", {success})
 )
 
-display_image(id:int):resource = (
+display_image(id:string):resource = (
   p =
     if (Db.exists(@/pixels[id])) then
       /pixels[id]
     else
-      /pixels[0]
+      // TODO: implement
+      /pixels["4oh4"]
 
   display(
     <>
-      <img class="preview" src="/img/{p.id}"/>
+      <img class="preview" src="/img/{id}"/>
       <p>Share this link: <a href="http://pixpaste.quaxio.com:8080/{id}">http://pixpaste.quaxio.com:8080/{id}</a></p>
     </>
   )
@@ -166,8 +168,8 @@ start(uri:Uri.relative):resource = (
   | {path={nil} ...} -> display_home()
   | {path={hd="favicon.ico" ...} ...} -> @static_resource("resources/favicon.png")
   | {path={hd="favicon.gif" ...} ...} -> @static_resource("resources/favicon.png")
-  | {path={hd="img" tl={~hd ...} ...} ...} -> display_raw_image(Int.of_string(hd))
-  | {path={~hd ...} ...} -> display_image(Int.of_string(hd))
+  | {path={hd="img" tl={~hd ...} ...} ...} -> display_raw_image(hd)
+  | {path={~hd ...} ...} -> display_image(hd)
 )
 
 server = Server.of_bundle([@static_include_directory("resources")])
