@@ -98,9 +98,15 @@ display(body):resource = (
 display_raw_image(id:string):resource = (
   p = /pixels[id]
 
-  // TODO: fix this ugly hack :(
   data:string = Map.fold((k, v, r -> String.concat("", [r, v])), p.data, "")
-  data = String.sub(22, String.length(data)-22, data)
+
+  // data is in the following format:
+  // data:image/<png|jpeg|etc.>;base64,<base64 encoded data>
+  // for now, we'll only locate ";base64," and ignore the first part
+  // we'll tell the browser the image is image/png, even if that's
+  // not the case (browsers are smart enough to figure things out)
+  offset:int = Option.get(String.index(";base64,", data)) + 8
+  data = String.sub(offset, String.length(data)-offset, data)
   data = Crypto.Base64.decode(data)
   Resource.raw_response(data, "image/png", {success})
 )
