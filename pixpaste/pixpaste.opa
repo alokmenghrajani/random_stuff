@@ -10,43 +10,41 @@ type pixel = {
 type upload_info = {
   id : string;
   secret : string;
+  offset : int;
 }
 
 db /pixels : stringmap(pixel)
 
-upload_data():void = (
-  // connect to server and send first piece of data
+@client upload_data():void = (
   data:string = Dom.get_value(#img_data)
   length:int = String.length(data)
   piece_length:float = Int.to_float(length) / 100.0
-  info:upload_info = List.fold(
-    ((i:int), (info:upload_info) ->
-      o:int = Int.of_float(Int.to_float(i) * piece_length)
-      e:int = Int.of_float(Int.to_float(i+1) * piece_length)
-      l:int =
-        if e > length then
-          length-o
-        else
-          e - o
-      if l>0 then
-        piece:string = String.substr(o, l, data)
-        do Dom.set_text(#progress, "{i}%")
-        if i == 0 then
-          upload_first_piece(piece)
-        else
-          do upload_next_piece(info.id, info.secret, i, piece)
-          info
-      else
-        info
-    ),
-    List.init_stable(x -> x, 100),
-    {id=""; secret=""})
-
-  do Dom.set_text(#progress, "100%")
-  Client.goto("/{info.id}")
+  upload_data_aux(data, length, piece_length, {id="" secret="" offset=0})
 )
 
-upload_first_piece(piece:string):upload_info = (
+@async @client rec upload_data_aux(data:string, length:int, piece_length:float, info:upload_info):void = (
+  // connect to server and send first piece of data
+  if info.offset<100 then
+    do Dom.set_text(#progress, "{info.offset}%")
+    o:int = Int.of_float(Int.to_float(info.offset) * piece_length)
+    e:int = Int.of_float(Int.to_float(info.offset+1) * piece_length)
+    l:int =
+      if e > length then length-o
+      else e-o
+    next_info:upload_info =
+      if l>0 then
+        piece:string = String.substr(o, l, data)
+        if info.id == "" then upload_first_piece(info, piece)
+        else upload_next_piece(info, piece)
+      else
+        {id=info.id secret=info.secret offset=info.offset+1}
+    upload_data_aux(data, length, piece_length, next_info)
+  else
+    do Dom.set_text(#progress, "100%")
+    Client.goto("/{info.id}")
+)
+
+@server @publish upload_first_piece(info:upload_info, piece:string):upload_info = (
   // TODO: handle collision!
   // TODO: increase range of characters
   id:string = Random.string(4)
@@ -54,18 +52,17 @@ upload_first_piece(piece:string):upload_info = (
   data:intmap = Map.empty
   data = Map.add(0, piece, data)
   do /pixels[id] <- {~data ~secret}
-  {~id ~secret}
+  {~id ~secret offset=info.offset+1}
 )
 
-upload_next_piece(id:string, secret:string, offset: int, piece:string):void = (
-  pixel:pixel = /pixels[id]
-  if (pixel.secret == secret) then
-    /pixels[id]/data[offset] <- piece
+@server @publish upload_next_piece(info:upload_info, piece:string):upload_info = (
+  pixel:pixel = /pixels[info.id]
+  do if (pixel.secret == info.secret) then
+    /pixels[info.id]/data[info.offset] <- piece
   else
-    do Debug.warning("secret mismatch: {secret} != {pixel.secret}")
-    void
+    Debug.warning("secret mismatch: {info.secret} != {pixel.secret}")
+  {id=info.id secret=info.secret offset=info.offset+1}
 )
-
 
 display(body):resource = (
   Resource.styled_page(
