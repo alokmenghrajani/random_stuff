@@ -16,7 +16,7 @@ type upload_info = {
 db /pixels : stringmap(pixel)
 
 @client upload_data():void = (
-  data:string = Dom.get_value(#img_data)
+  data:string = Option.get(Dom.get_property(#preview, "src"))
   length:int = String.length(data)
   piece_length:float = Int.to_float(length) / 100.0
   upload_data_aux(data, length, piece_length, {id="" secret="" offset=0})
@@ -155,7 +155,6 @@ display_pixpaste():resource = (
       <section>
         <div class="page-header"><h1>{instruction} <small>to share an image</small></h1></div>
         <p>Hint: {hint}</p>
-        <input id=#img_data type="text" class="hidden"/>
         <div class="alert-message error" id=#error style="display: none"/>
         <div><img id=#preview class="preview" src="resources/preview.png"/></div>
         <div><input id=#btn type="button" class="btn" onclick={_ -> upload_data()} value="Upload"/></div>

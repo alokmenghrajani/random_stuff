@@ -2,7 +2,6 @@
   var file_to_img = function(file) {
     reader = new FileReader();
     reader.onload = function(e) {
-      document.getElementById('img_data').value = e.target.result;
       document.getElementById('preview').src = e.target.result;
     };
     // todo: handle case where file isn't an image...
@@ -40,7 +39,6 @@
         for (var i=0; i<e.children.length; i++) {
           var node = e.children[i];
           if (node.nodeName == 'img') {
-            document.getElementById('img_data').value = node.src;
             document.getElementById('preview').src = node.src;
             document.getElementById('btn').className = "btn primary";
             document.getElementById('error').style.display = 'none';
@@ -52,7 +50,6 @@
         document.getElementById('error').innerHTML = "Sorry, paste failed. Did not get image data!";
         document.getElementById('error').style.display = '';
         document.getElementById('btn').className = "btn";
-        document.getElementById('img_data').value = '';
         document.getElementById('preview').src = 'resources/preview.png';
       }, 1);
     });
@@ -70,7 +67,6 @@
       e.clipboardData.types.join(", ") + ". Was expecting image/png data!"
       document.getElementById('error').style.display = '';
       document.getElementById('btn').className = "btn";
-      document.getElementById('img_data').value = '';
       document.getElementById('preview').src = 'resources/preview.png';
     });
   }
