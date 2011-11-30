@@ -22,6 +22,18 @@
     file_to_img(file);
   }, false);
 
+  dialogOpen = false;
+  var prompt_file_upload = function(e) {
+    if (!dialogOpen) {
+      dialogOpen = true;
+      document.getElementById('file').click();
+      console.log(document.getElementById('file').files);
+      file_to_img(document.getElementById('file').files[0]);
+      dialogOpen = false;
+    }
+  }
+  document.addEventListener("click", prompt_file_upload, false);
+
   if (navigator.userAgent.indexOf('Firefox') != -1) {
     var e = document.createElement('div');
     document.body.appendChild(e);
