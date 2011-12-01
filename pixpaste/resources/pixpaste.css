@@ -1,54 +1,146 @@
-    body, html {
-      margin: 0;
-      overflow: hidden;
-    }
-    #outer {
-      height: 100%;
-      position: relative;
-      width: 100%;
-    }
-    #outer[id] {
-      display: table;
-      position: static;
-    }
-    #middle {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      text-align: center;
-    }
-    #middle[id] {
-      display: table-cell;
-      vertical-align: middle;
-      position: static;
-    }
-    #inner {
-      position: relative;
-      top: -50%;
-      text-align: left;
-    }
-    #inner {
-      width: 200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
+body, html {
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+#outer {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+#outer[id] {
+  display: table;
+  position: static;
+}
+#middle {
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  width: 100%;
+}
+#middle[id] {
+  display: table-cell;
+  position: static;
+  vertical-align: middle;
+}
+#inner {
+  position: relative;
+  text-align: center;
+  top: -50%;
+}
+#inner {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+  height: 200px;
+}
 .hidden {
   display: none;
 }
+.center {
+  text-align: center;
+}
+.half {
+  width: 50%;
+  margin: 0;
+  float: left;
+}
+
+.half #inner {
+  width: 300px;
+  text-align: right;
+}
+
+.actions {
+  margin: 100px 0 0 0;
+}
 
 .preview {
+  max-width: 300px;
+  max-height: 200px;
   border: 1px solid #DDDDDD;
   border-radius: 4px 4px 4px 4px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
-  margin: 20px auto 20px auto;
   padding: 4px;
-  max-width: 800px;
-  max-height: 800px;
 }
+.menu {
 
+}
 footer {
   background-color: #EEEEEE;
   text-shadow: 0 1px 0 #FFFFFF;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.024) inset;
+}
+
+    .help {
+      font-family: Corsiva, "Lucida Handwriting", script;
+      position: relative;
+      float: left;
+      left: 50%;
+      display: inline;
+      width: 0px;
+      height: 0px;
+    }
+    .help * {
+      display: inline;
+      position: relative;
+      white-space: nowrap;
+    }
+    #help1 {
+      top: -80px;
+      left: -400px;
+      width: 0px;
+    }
+    #help1_arrow {
+      top: -50px;
+      left: -300px;
+    }
+    #help2 {
+      top: 200px;
+      left: -400px;
+    }
+    #help2_arrow {
+      top: 90px;
+      left: -280px;
+    }
+    #help3 {
+      top: -80px;
+      left: 250px;
+    }
+    #help3_arrow {
+      top: -50px;
+      left: 200px;
+    }
+    #help4 {
+      top: 200px;
+      left: 280px;
+    }
+    #help4_arrow {
+      top: 80px;
+      left: 200px;
+    }
+
+#preview_div {
+  width: 300px;
+  border: 1px solid blue;
+}
+
+#Body {
+  overflow: auto;
+}
+
+#one {
+  margin: 5% auto;
+  width: 80%;
+  height: 80%;
+  text-align: center;
+}
+#one img {
+  border: 1px solid #DDDDDD;
+  border-radius: 4px 4px 4px 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+  padding: 4px;
+  max-height: 100%;
+  max-width: 100%;
 }

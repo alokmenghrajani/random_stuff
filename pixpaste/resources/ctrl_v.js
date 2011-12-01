@@ -27,12 +27,18 @@
     if (!dialogOpen) {
       dialogOpen = true;
       document.getElementById('file').click();
-      console.log(document.getElementById('file').files);
-      file_to_img(document.getElementById('file').files[0]);
       dialogOpen = false;
     }
+    return false;
   }
-  document.addEventListener("click", prompt_file_upload, false);
+  var e = document.createElement('input');
+  e.type = 'file';
+  e.id='file';
+  e.className='hidden';
+  e.onchange = function(){file_to_img(document.getElementById('file').files[0]);}
+  document.body.appendChild(e);
+  document.getElementById('file_chooser').addEventListener("click", prompt_file_upload, false);
+
 
   if (navigator.userAgent.indexOf('Firefox') != -1) {
     var e = document.createElement('div');

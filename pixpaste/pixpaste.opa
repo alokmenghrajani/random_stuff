@@ -67,7 +67,7 @@ db /pixels : stringmap(pixel)
 display(body):resource = (
   Resource.styled_page(
     "PixPaste",
-    ["http://localhost/~amenghra/pixpaste.css"],
+    ["resources/pixpaste.css"],
     <>
       {body}
     </>
@@ -174,7 +174,7 @@ display_pixpaste():resource = (
         <img id=#preview class="preview" src="resources/preview.png"/>
         <progress id=#progress value="0" max="20" style="display: none"/>
       </div></div></div>
-      <script src="http://localhost/~amenghra/ctrl_v.js"></script>
+      <script src="resources/ctrl_v.js"></script>
     </div></div></div>
   )
 )
