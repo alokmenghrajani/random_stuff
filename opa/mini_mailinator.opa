@@ -90,10 +90,8 @@ function delete(string mailbox, int item, string dom_id) {
   void
 }
 
-function xhtml render_message(string mailbox, int key, message m) {
-  dom_id = Dom.fresh_id()
-
-  <tr id={dom_id}>
+function xhtml render_message(string mailbox, int key, message m, string dom_id, string style) {
+  <tr id={dom_id} style="{style}">
     <td>
       {m.from}
     </td>
@@ -110,7 +108,10 @@ function xhtml render_message(string mailbox, int key, message m) {
 }
 
 function update_list(mailbox_key_message m) {
-  #rows =+ render_message(m.mailbox, m.key, m.message)
+  dom_id = Dom.fresh_id()
+  #rows =+ render_message(m.mailbox, m.key, m.message, dom_id, "display: none")
+  Dom.transition(Dom.select_id(dom_id), Dom.Effect.with_duration({millisec:1000}, Dom.Effect.fade_in()))
+  void
 }
 
 function get_list(string mailbox) {
@@ -118,7 +119,7 @@ function get_list(string mailbox) {
     function(k, v, r) {
       <>
         {r}
-        {render_message(mailbox, k, v)}
+        {render_message(mailbox, k, v, Dom.fresh_id(), "")}
       </>
     },
     /messages[mailbox],
