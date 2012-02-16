@@ -174,12 +174,33 @@ module Grid {
       data: data,
     }
   }
+
+  /**
+   * Fold over every element in the grid.
+   *
+   * f is a function that takes i, j, 'a, 'b and returns 'b
+   */
+   function 'b fold(f, grid('a) grid, 'b r0) {
+     IntMap.fold(
+       function(int x, intmap('a) inner_map, r1) {
+         IntMap.fold(
+           function(int y, 'a v, 'b r2) {
+             f(x, y, v, r2)
+           },
+           inner_map,
+           r1
+         )
+       },
+       grid.data,
+       r0
+     )
+   }
 }
 
 type intgrid = grid(int)
 
 module IntGrid {
   function intgrid create(int size_x, int size_y) {
-    Grid.create(int size_x, int size_y, 0)
+    Grid.initialize(int size_x, int size_y, 0)
   }
 }
