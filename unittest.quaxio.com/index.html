@@ -13,7 +13,7 @@ stuff useful for testing purpose.</p>
 <pre>iptables -A INPUT -p tcp --dport 9001 -j REJECT --reject-with tcp-reset</pre></li>
 <li>unittest.quaxio.com:9002 is closed and triggers an icmp response
 <pre>iptables -A INPUT -p tcp --dport 9001 -j REJECT --reject-with icmp-port-unreachable</pre></li>
-<li>https is enabled (self-signed cert)</li>
+<li>https is enabled (startssl free cert)</li>
 <li>http://unittest.quaxio.com/status returns a constant string</li>
 <li>http://unittest.quaxio.com/ball.png returns a large image (600x600 pixels)</li>
 <li>http://unittest.quaxio.com/spacer.gif is a 1x1 pixel image</li>
