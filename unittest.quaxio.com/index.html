@@ -4,6 +4,7 @@
 <p>unittest.quaxio.com is a service owned by Alok Menghrajani. It contains some
 stuff useful for testing purpose.</p>
 <p>The DNS is hosted with namecheap.com and the service itself runs on Amazon's EC2.</p>
+<p>(https://another-unittest.quaxio.com/ is the same server, but will trigger an invalid cert warning.)</p>
 
 <h2>useful things</h2>
 <ol>
@@ -13,13 +14,15 @@ stuff useful for testing purpose.</p>
 <pre>iptables -A INPUT -p tcp --dport 9001 -j REJECT --reject-with tcp-reset</pre></li>
 <li>unittest.quaxio.com:9002 is closed and triggers an icmp response
 <pre>iptables -A INPUT -p tcp --dport 9001 -j REJECT --reject-with icmp-port-unreachable</pre></li>
-<li>https is enabled (startssl free cert)</li>
+<li>https is enabled (startssl.com's free cert)</li>
 <li>http://unittest.quaxio.com/status returns a constant string</li>
 <li>http://unittest.quaxio.com/ball.png returns a large image (600x600 pixels)</li>
 <li>http://unittest.quaxio.com/spacer.gif is a 1x1 pixel image</li>
 <li>http://unittest.quaxio.com/tree.png is actually an animated gif</li>
 <li>http://unittest.quaxio.com/redirect_ball.pl redirects to ball.png</li>
+<li>http://unittest.quaxio.com/redirect_https_ball.pl redirects to ball.png over https</li>
 <li>http://unittest.quaxio.com/redirect_spacer.pl redirects to spacer.gif</li>
+<li>http://unittest.quaxio.com/redirect_https_spacer.pl redirects to spacer.gif over https</li>
 <li>http://unittest.quaxio.com/redirect_inf.pl redirects to itself</li>
 <li>http://unittest.quaxio.com/evil_gzip.pl: a large file (1G) compressed to 1M, crashes some stuff
 <div>(some systems only crash if the response is chunked encoded, which is the case here)</div></li>
