@@ -11,7 +11,7 @@
  * - TileOffsets aren't supported, I didn't need them when I wrote
  *   this code...
  *
- * More info here: arxiv.org/pdf/1201.0397
+ * More info here: http://arxiv.org/pdf/1201.0397
  */
 
 require_once("Tiff.php");
