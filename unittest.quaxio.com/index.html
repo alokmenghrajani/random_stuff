@@ -16,6 +16,7 @@ stuff useful for testing purpose.</p>
 <pre>iptables -A INPUT -p tcp --dport 9001 -j REJECT --reject-with icmp-port-unreachable</pre></li>
 <li>https is enabled (startssl.com's free cert)</li>
 <li>http://unittest.quaxio.com/status returns a constant string</li>
+<li>http://unittest.quaxio.com/request.pl dumps the request</li>
 <li>http://unittest.quaxio.com/ball.png returns a large image (600x600 pixels)</li>
 <li>http://unittest.quaxio.com/spacer.gif is a 1x1 pixel image</li>
 <li>http://unittest.quaxio.com/tree.png is actually an animated gif</li>
@@ -27,6 +28,7 @@ stuff useful for testing purpose.</p>
 <li>http://unittest.quaxio.com/evil_gzip.pl: a large file (1G) compressed to 1M, crashes some stuff
 <div>(some systems only crash if the response is chunked encoded, which is the case here)</div></li>
 <li>http://unittest.quaxio.com/lgcookie.pl: an image with a large cookie</li>
+<li>http://unittest.quaxio.com/redirect_request.pl: redirect using spaces in query string</li>
 </ol>
 
 <h2>source &amp; contributing</h2>
