@@ -52,13 +52,16 @@ $tiff = new Tiff($tiff_data);
 
 // some random bytes to throw people off
 $random = '';
-for ($i=0; $i<1000; $i++) {
+for ($i=0; $i<976; $i++) {
   if (mt_rand(0, 100) < 25) {
     $random .= "\n";
   } else {
     $random .= chr(mt_rand(0, 255));
   }
 }
+// Obfuscation against `strings`
+$random .= "
+pp%eeFF%A-1.0AWWWDxx";
 
 echo "Reading $pdf_file\n";
 // inject the pdf file inside the tiff file
