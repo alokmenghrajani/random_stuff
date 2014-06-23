@@ -1,0 +1,1 @@
+<?php $s='<?php $s=%s;printf($s,var_export($s,1));';printf($s,var_export($s,1));

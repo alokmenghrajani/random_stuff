@@ -1,0 +1,1 @@
+<?php $d='ZWNobyAiPD9waHAgXCRkPSckZCc7ZXZhbChiYXNlNjRfZGVjb2RlKFwkZCkpOyI7';eval(base64_decode($d));

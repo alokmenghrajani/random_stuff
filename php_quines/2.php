@@ -1,0 +1,1 @@
+<?php $d='ZWNobyAnPD9waHAgJGQ9XCcnLiRkLidcJzsgJy5iYXNlNjRfZGVjb2RlKCRkKTs'; echo '<?php $d=\''.$d.'\'; '.base64_decode($d);
