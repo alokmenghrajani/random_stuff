@@ -1,17 +1,19 @@
 <?php
 
 /**
- * We have two numbers m and n (between 2 and 100). Mr.S is told their sum, Mr.P is told their product.
+ * Solution to the "impossible puzzle" (http://people.sc.fsu.edu/~jburkardt/fun/puzzles/impossible_puzzle.html)
+ * 
+ * Let x and y be two integers with 1 < x < y and x+y <= 100. Suppose Ms. S is given the value of x+y and
+ * Mr. P is given the value of x*y.
+ * 
  * The following dialog takes place:
  *
- * Mr.P: I know the product.
- * Mr.S: I know the sum.
- * Mr.P: I however don't know the numbers.
- * Mr.S: I knew you didn't know. I don't know either.
- * Mr.P: Now I know the numbers.
- * Mr.S: Now I know them too.
+ * Mr. P says: "I don't know the values of x and y."
+ * Ms. S replies: "I knew that you didn't know the values."
+ * Mr. P responds: "Oh, then I do know the values of x and y."
+ * Ms. S exclaims: "Oh, then so do I."
  *
- * What are the numbers m and n ?
+ * What are the numbers x and y?
  */
 
 function idx($arr, $e, $default=null) {
@@ -95,4 +97,3 @@ foreach ($sums as $k => $v) {
 echo "Step 4: ", count($sums), " possibilities\n";
 
 print_r($sums);
-
