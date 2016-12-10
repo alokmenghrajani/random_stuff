@@ -8,6 +8,10 @@
  * Step 2: rtfm -> https://doc.rust-lang.org/book/
  * Step 3: solve the puzzles starting from http://adventofcode.com/2016/day/1
  *
+ * Note: the second part of the puzzle is only revealed after you complete part 1. In most cases,
+ *       I cleaned up part1. If you are solving these kinds of puzzle with the aim to be the
+ *       fastest, you probably wouldn't bother generalizing your code.
+ *
  * Credits:
  * - Peter Ruibal whose main.rs I stole.
  * - Matt McPherrin who reviewed some of this code and provided some useful feedback.
@@ -18,6 +22,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 mod day01;
+mod day02;
 
 // Loads the file ./input/<number>. The input files are unique to each person.
 // All the inputs seem to be ascii, it might be more efficient to use [u8]?
@@ -47,11 +52,7 @@ fn main() {
     let input = grab_local_input(day);
     match day {
         1 => day01::solve(&input),
-        // 2 => day02::solve(&grab_local_input(2)),
-        // 3 => day03::solve(&grab_local_input(3)),
-        // 4 => day04::solve(&grab_local_input(4)),
-        // 5 => day05::solve(&grab_local_input(5)),
-        // 6 => day06::solve(&grab_local_input(6)),
+        2 => day02::solve(&input),
         _ => panic!("Day {} not implemented", day),
     };
 }
