@@ -1,0 +1,6 @@
+[package]
+name = "2016"
+version = "0.1.0"
+authors = ["Alok Menghrajani <alok@squareup.com>"]
+
+[dependencies]
