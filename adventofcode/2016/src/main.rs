@@ -24,6 +24,7 @@ use std::io::prelude::*;
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 
 // Loads the file ./input/<number>. The input files are unique to each person.
 // All the inputs seem to be ascii, it might be more efficient to use [u8]?
@@ -55,6 +56,7 @@ fn main() {
         1 => day01::solve(&input),
         2 => day02::solve(&input),
         3 => day03::solve(&input),
+        4 => day04::solve(&input),
         _ => panic!("Day {} not implemented", day),
     };
 }
