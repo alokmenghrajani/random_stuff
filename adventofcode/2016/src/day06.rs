@@ -104,29 +104,3 @@ fn _solve(inputs: &Vec<&[u8]>, l: usize) -> (String, String) {
     }
     (part1, part2)
 }
-
-// fn solve_offset(inputs: &[&[u8]], offset: usize) -> (u8, u8) {
-//     let mut counts: [i32; 26] = [0; 26];
-//     let mut max = None;
-//     let mut min = None;
-//
-//     for input in inputs {
-//         let t: usize = (input[offset] - ('a' as u8)) as usize;
-//         counts[t] += 1;
-//     }
-//     // find max and min
-//     for e in counts.iter().enumerate() {
-//         match max {
-//             None => max = Some(e),
-//             Some((_, v)) if e.1 > v => max = Some(e),
-//             _ => (),
-//         }
-//         match min {
-//             None => min = Some(e),
-//             Some((_, v)) if e.1 < v && *e.1 > 0 => min = Some(e),
-//             _ => (),
-//         }
-//     }
-//
-//     return (max.unwrap().0 as u8 + 'a' as u8, min.unwrap().0 as u8 + 'a' as u8);
-// }
