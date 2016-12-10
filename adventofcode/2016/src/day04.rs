@@ -114,5 +114,6 @@ fn checksum(s: &str) -> String {
     } else {
         v2.1.cmp(v1.1)
     });
+    // If we try to use .map() and push characters in a string, we have to consume the iterator.
     t.iter().take(5).fold(String::new(), |acc, v| format!("{}{}", acc, to_char(*v.0)))
 }
