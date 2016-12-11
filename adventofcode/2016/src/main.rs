@@ -28,6 +28,7 @@ mod day04;
 mod day05;
 mod day06;
 mod day07;
+mod day08;
 
 // Loads the file ./input/<number>. The input files are unique to each person.
 // All the inputs seem to be ascii, it might be more efficient to use [u8]?
@@ -62,6 +63,7 @@ fn main() {
         5 => day05::solve("ojvtpuvg"),
         6 => day06::solve(&grab_local_input(day)),
         7 => day07::solve(&grab_local_input(day)),
+        8 => day08::solve(&grab_local_input(day)),
         _ => panic!("Day {} not implemented", day),
     };
 }
