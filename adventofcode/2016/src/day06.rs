@@ -75,7 +75,7 @@ fn part2(input: &str, l: usize) -> String {
 fn _solve(inputs: &Vec<&[u8]>, l: usize) -> (String, String) {
     // initialize an array of maps. The maps will track the frequency of each character.
     let mut counts = vec![];
-    for i in 0..l {
+    for _ in 0..l {
         counts.push(HashMap::new());
     }
     // fill the frequency counts.
