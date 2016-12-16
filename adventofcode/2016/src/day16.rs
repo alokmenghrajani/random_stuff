@@ -91,7 +91,9 @@ pub fn solve(input: &str) {
     expand(&mut t);
     assert_eq!(t, str_to_vec("1111000010100101011110000"));
 
-    assert_eq!(checksum(&str_to_vec("110010110100")), "100");
+    t = str_to_vec("110010110100");
+    checksum(&mut t);
+    assert_eq!(vec_to_str(&t), "100");
     assert_eq!(_solve("10000", 20), "01100");
 
     println!("part 1: {:?}", _solve(input, 272));
@@ -105,7 +107,8 @@ fn _solve(input: &str, len: usize) -> String {
         expand(&mut t);
     }
     t.truncate(len);
-    checksum(&t)
+    checksum(&mut t);
+    vec_to_str(&t)
 }
 
 // Helper function to convert a string of "0" and "1" into a Vec<bool>.
@@ -128,16 +131,19 @@ fn expand(t: &mut Vec<bool>) {
     }
 }
 
-fn checksum(t: &Vec<bool>) -> String {
+fn checksum(t: &mut Vec<bool>) {
     let l = t.len();
     if l % 2 == 1 {
-        return vec_to_str(&t);
+        return;
     }
-    let mut r = Vec::with_capacity(l / 2);
+    //    let mut r = Vec::with_capacity(l / 2);
     let mut i = 0;
+    let mut j = 0;
     while i < l {
-        r.push(t[i] == t[i + 1]);
+        t[j] = t[i] == t[i + 1];
         i += 2;
+        j += 1;
     }
-    checksum(&r)
+    t.truncate(j);
+    checksum(t)
 }
