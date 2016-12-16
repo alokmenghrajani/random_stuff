@@ -78,30 +78,32 @@ pub fn solve(input: &str) {
     println!("part 2: {}", _solve(&part2[..]));
 }
 
+#[derive(Debug)]
+struct Disc {
+    index: usize,
+    size: usize,
+    start: usize,
+}
+
 fn _solve(input: &str) -> usize {
     // Parse the input and extract the disc sizes and positions.
-    let mut discs: Vec<(usize, usize)> = vec![];
-    let re = Regex::new(r"(\d+) positions.*position (\d+)").unwrap();
+    let mut discs: Vec<Disc> = vec![];
+    let re = Regex::new(r"Disc #(\d+) has (\d+) positions; at time=0, it is at position (\d+)")
+        .unwrap();
     for line in input.trim().split("\n") {
-        let positions = re.captures(line).unwrap().at(1).unwrap().parse().unwrap();
-        let start = re.captures(line).unwrap().at(2).unwrap().parse().unwrap();
-        discs.push((positions, start));
+        let index = re.captures(line).unwrap().at(1).unwrap().parse().unwrap();
+        let size = re.captures(line).unwrap().at(2).unwrap().parse().unwrap();
+        let start = re.captures(line).unwrap().at(3).unwrap().parse().unwrap();
+        discs.push(Disc {
+            index: index,
+            size: size,
+            start: start,
+        });
     }
 
     // find the first value which works for all discs.
     let mut i = 0;
-    let len = discs.len();
-    loop {
-        let mut ok = true;
-        for j in 0..len {
-            if (i + j + 1 + discs[j].1) % discs[j].0 != 0 {
-                ok = false;
-                break;
-            }
-        }
-        if ok {
-            break;
-        }
+    while !discs.iter().all(|d| (i + d.index + d.start) % d.size == 0) {
         i += 1;
     }
     i
