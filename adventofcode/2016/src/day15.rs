@@ -98,7 +98,7 @@ fn _solve(input: &str) -> usize {
         })
         .collect();
 
-    // find the first value which works for all discs.
+    // Find the first value which works for all discs.
     let mut i = 0;
     while discs.iter().any(|d| (i + d.index + d.start) % d.size != 0) {
         i += 1;
