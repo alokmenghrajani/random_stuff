@@ -126,5 +126,5 @@ fn compute_md5(door: &str, i: i32) -> Option<String> {
     if s.starts_with("00000") {
         return Some(s);
     }
-    return None;
+    None
 }
