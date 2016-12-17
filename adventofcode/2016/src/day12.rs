@@ -1,13 +1,14 @@
 // This puzzle can be solved in many ways:
-// - manually convert the input to code in your favorite language (very easy if you can use
-//   GOTO-style instructions). The input isn't very long.
-// - write an interpreter. Probably what most people did.
-// - write compiler / JIT. That's the crazy approach I decided to take.
+// - manually convert the short piece of input into your favorite language. It's quick if your
+//   language supports GOTO-style statements. You can also use loops otherwise.
+// - write an interpreter. Probably what most people did?
+// - write a compiler / JIT. That's the crazy approach I decided to take :)
 //
 // I proceed in three steps:
-// - parse the input.
-// - write the x64 machine code into a buffer.
-// - jump at the start of the buffer.
+// - parse the input and create a Vec<Cmd>.
+// - write the x64 machine code into a buffer. I do this step twice because the machine code's
+//   length is not known ahead of time and is needed to compute the offset of jumps.
+// - jump to the start of the buffer and execute the input.
 
 // I found a tutorial by Jonathan Turner, which was very helpful:
 // http://www.jonathanturner.org/2015/12/building-a-simple-jit-in-rust.html
