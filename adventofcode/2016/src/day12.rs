@@ -29,7 +29,7 @@ pub fn solve(input: &str) {
 }
 
 // Normally, compilers have multiple intermediate representations. We can take a shortcut here and
-// use something x64 specific.
+// use a specific representation for our target (x64).
 #[derive(Clone)]
 enum Cmd {
     CpyI(i64, String),
@@ -54,6 +54,8 @@ fn reg_to_bits(r: String) -> u8 {
 }
 
 // Converting instructions to machine code is a pain. Thankfully, we just care about a subset.
+// If you want to see the amount of work it takes to support all the instructions on x64, take a
+// look at Intel's encoder/decoder library: https://intelxed.github.io
 //
 // We assume that a short jump is enough. Ideally, we should plan for a long jump
 // and then convert to a short jump after we know the address of everything. Doing that
