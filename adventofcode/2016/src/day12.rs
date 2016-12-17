@@ -20,8 +20,8 @@ use std::mem;
 use std::ops::{Index, IndexMut};
 
 pub fn solve(input: &str) {
-    // let test_input = "cpy 41 a\ninc a\ninc a\ndec a\njnz a 2\ndec a";
-    // assert_eq!(_solve(test_input, (0, 0, 0, 0)), 42);
+    let test_input = "cpy 41 a\ninc a\ninc a\ndec a\njnz a 2\ndec a";
+    assert_eq!(_solve(test_input, (0, 0, 0, 0)), 42);
 
     println!("part 1: {}", _solve(input, (0, 0, 0, 0)));
     println!("part 2: {}", _solve(input, (0, 0, 1, 0)));
@@ -174,7 +174,8 @@ fn _solve(input: &str, (reg_a, reg_b, reg_c, reg_d): (i64, i64, i64, i64)) -> i6
     bytes.extend_from_slice(&[0xc3]); // ret
 
     // run the code
-    let mut jit: JitMemory = JitMemory::new(1);
+    let n_pages = (bytes.len() as f64 / PAGE_SIZE as f64).ceil() as usize;
+    let mut jit: JitMemory = JitMemory::new(n_pages);
     for i in 0..bytes.len() {
         jit[i] = bytes[i];
     }
@@ -184,10 +185,6 @@ fn _solve(input: &str, (reg_a, reg_b, reg_c, reg_d): (i64, i64, i64, i64)) -> i6
 
 fn debug_me(fun: fn() -> i64) -> i64 {
     fun()
-}
-
-extern "C" {
-    fn memset(s: *mut libc::c_void, c: libc::uint32_t, n: libc::size_t) -> *mut libc::c_void;
 }
 
 const PAGE_SIZE: usize = 4096;
@@ -206,8 +203,6 @@ impl JitMemory {
             libc::mprotect(_contents,
                            size,
                            libc::PROT_EXEC | libc::PROT_READ | libc::PROT_WRITE);
-
-            memset(_contents, 0xc3, size);  // for now, prepopulate with 'RET'
 
             contents = mem::transmute(_contents);
         }
