@@ -32,6 +32,7 @@ mod day08;
 mod day09;
 mod day10;
 // todo: clean up and post previous days...
+mod day14;
 mod day15;
 mod day16;
 
@@ -71,6 +72,7 @@ fn main() {
         8 => day08::solve(&grab_local_input(day)),
         9 => day09::solve(&grab_local_input(day)),
         10 => day10::solve(&grab_local_input(day)),
+        14 => day14::solve("qzyelonm"),
         15 => day15::solve(&grab_local_input(day)),
         16 => day16::solve("01111001100111011"),
         _ => panic!("Day {} not implemented", day),
