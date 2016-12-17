@@ -53,7 +53,11 @@ fn reg_to_bits(r: String) -> u8 {
     b - b'a' + 0xc0
 }
 
-// Converting instructions to machine code is a pain. Thankfully, we just care about a subet.
+// Converting instructions to machine code is a pain. Thankfully, we just care about a subset.
+//
+// We assume that a short jump is enough. Ideally, we should plan for a long jump
+// and then convert to a short jump after we know the address of everything. Doing that
+// however is slightly more complicated.
 fn get_bytes(cmd: Cmd) -> Vec<u8> {
     let mut bytes = vec![];
     match cmd {
@@ -67,21 +71,21 @@ fn get_bytes(cmd: Cmd) -> Vec<u8> {
         Cmd::DecR(r) => bytes.extend_from_slice(&[0x49, 0xff, 0xc8 | reg_to_bits(r)]),
         Cmd::JnzI(i, _) => {
             bytes.extend_from_slice(&[0x48, 0xc7, 0xc0]);
-            bytes.append(&mut i64_to_bytes(i)); // mov rax, i
+            bytes.append(&mut i64_to_bytes(i)); // mov rax, <i>
             bytes.extend_from_slice(&[0x48, 0x85, 0xc0]); // test rax, rax
-            bytes.extend_from_slice(&[0x75, 0x00]); // jne offset
+            bytes.extend_from_slice(&[0x75, 0x00]); // jne <offset>
         }
         Cmd::JnzR(r, _) => {
-            bytes.extend_from_slice(&[0x4c, 0x89, (0xc0 | reg_to_bits(r) << 3)]); // mov rax, r
+            bytes.extend_from_slice(&[0x4c, 0x89, (0xc0 | reg_to_bits(r) << 3)]); // mov rax, <r>
             bytes.extend_from_slice(&[0x48, 0x85, 0xc0]); // test rax, rax
-            bytes.extend_from_slice(&[0x75, 0x00]); // jne offset
+            bytes.extend_from_slice(&[0x75, 0x00]); // jne <offset>
         }
         Cmd::Nop => bytes.push(0x90),
     }
     bytes
 }
 
-// Converting instructions to machine code is a pain. Thankfully, we just care about a subet.
+// Same as get_bytes but for the 2nd pass.
 fn get_bytes2(cmd: Cmd, offset: usize, offsets: &Vec<(Cmd, usize)>) -> Vec<u8> {
     let mut bytes = vec![];
     match cmd {
@@ -90,17 +94,17 @@ fn get_bytes2(cmd: Cmd, offset: usize, offsets: &Vec<(Cmd, usize)>) -> Vec<u8> {
             delta -= offsets[offset].1 as isize;
             assert_eq!(delta, (delta as i8) as isize);
             bytes.extend_from_slice(&[0x48, 0xc7, 0xc0]);
-            bytes.append(&mut i64_to_bytes(i)); // mov rax, i
+            bytes.append(&mut i64_to_bytes(i)); // mov rax, <i>
             bytes.extend_from_slice(&[0x48, 0x85, 0xc0]); // test rax, rax
-            bytes.extend_from_slice(&[0x75, delta as u8]); // jne offset
+            bytes.extend_from_slice(&[0x75, delta as u8]); // jne <offset>
         }
         Cmd::JnzR(r, o) => {
             let mut delta: isize = offsets[(offset as isize + o - 1) as usize].1 as isize;
             delta -= offsets[offset].1 as isize;
             assert_eq!(delta, (delta as i8) as isize);
-            bytes.extend_from_slice(&[0x4c, 0x89, 0xc0 | (reg_to_bits(r.clone()) << 3)]); // mov rax, r
+            bytes.extend_from_slice(&[0x4c, 0x89, 0xc0 | (reg_to_bits(r) << 3)]); // mov rax, <r>
             bytes.extend_from_slice(&[0x48, 0x85, 0xc0]); // test rax, rax
-            bytes.extend_from_slice(&[0x75, delta as u8]); // jne offset
+            bytes.extend_from_slice(&[0x75, delta as u8]); // jne <offset>
         }
         _ => bytes.append(&mut get_bytes(cmd)),
     }
@@ -108,13 +112,14 @@ fn get_bytes2(cmd: Cmd, offset: usize, offsets: &Vec<(Cmd, usize)>) -> Vec<u8> {
 }
 
 fn _solve(input: &str, (reg_a, reg_b, reg_c, reg_d): (i64, i64, i64, i64)) -> i64 {
-    // parse input
     let mut cmds = vec![];
+    // set the initial values for our registers.
     cmds.push(Cmd::CpyI(reg_a, "a".to_string()));
     cmds.push(Cmd::CpyI(reg_b, "b".to_string()));
     cmds.push(Cmd::CpyI(reg_c, "c".to_string()));
     cmds.push(Cmd::CpyI(reg_d, "d".to_string()));
 
+    // parse input
     for line in input.trim().split('\n') {
         if let Some(cap) = Regex::new(r"^cpy (-?\d+) ([a-d])").unwrap().captures(line) {
             cmds.push(Cmd::CpyI(cap.at(1).unwrap().parse().unwrap(),
@@ -146,16 +151,18 @@ fn _solve(input: &str, (reg_a, reg_b, reg_c, reg_d): (i64, i64, i64, i64)) -> i6
         }
         panic!("unknown command");
     }
+    // Put a nop at the end to handle the case where the last instruction is a jump.
     cmds.push(Cmd::Nop);
 
-    // emit the machine code. We emit it twice so that we have all the right addresses for jumps.
+    // We don't need to save any registers because we only use eax and r8-r11
+
+    // Emit the machine code. We emit it twice so that we have all the right addresses for jumps.
     let mut cmds_offsets: Vec<(Cmd, usize)> = vec![];
     for cmd in cmds {
         cmds_offsets.push((cmd, 0));
     }
     let mut bytes = vec![];
 
-    // We don't need to save any registers because we only use eax and r8-r11
 
     let mut cmd_offsets2 = vec![];
     for (cmd, _) in cmds_offsets {
@@ -163,7 +170,7 @@ fn _solve(input: &str, (reg_a, reg_b, reg_c, reg_d): (i64, i64, i64, i64)) -> i6
         cmd_offsets2.push((cmd, bytes.len()))
     }
 
-    // second pass to resolve jumps
+    // Second pass to resolve jumps.
     bytes.truncate(0);
     for i in 0..cmd_offsets2.len() {
         let (cmd, _) = cmd_offsets2[i].clone();
@@ -171,22 +178,28 @@ fn _solve(input: &str, (reg_a, reg_b, reg_c, reg_d): (i64, i64, i64, i64)) -> i6
     }
 
     // Since we don't save any registers, we don't need to restore any.
+    // Put the result in rax and return.
     bytes.extend_from_slice(&[0x4c, 0x89, 0xc0]); // mov rax, r8
     bytes.extend_from_slice(&[0xc3]); // ret
 
-    // run the code
+    // Allocate a buffer using posix_memalign, copy our bytes and run the code.
+    // note: we never bother to free our buffer.
     let n_pages = (bytes.len() as f64 / PAGE_SIZE as f64).ceil() as usize;
     let mut jit: JitMemory = JitMemory::new(n_pages);
     for i in 0..bytes.len() {
         jit[i] = bytes[i];
     }
-    let f: fn() -> i64 = unsafe { mem::transmute(jit.contents) };
-    debug_me(f)
+    let fun: fn() -> i64 = unsafe { mem::transmute(jit.contents) };
+    debug_me(fun)
 }
 
+// Instead of directly calling fun() above, we go through this function. It makes setting
+// breakpoints in lldb easier.
 fn debug_me(fun: fn() -> i64) -> i64 {
     fun()
 }
+
+// The code below is mostly copied verbatim from https://github.com/jonathandturner/rustyjit
 
 const PAGE_SIZE: usize = 4096;
 
@@ -201,6 +214,8 @@ impl JitMemory {
             let size = num_pages * PAGE_SIZE;
             let mut _contents: *mut libc::c_void = mem::uninitialized();
             libc::posix_memalign(&mut _contents, PAGE_SIZE, size);
+            // We should probably check that posix_memalign worked by making sure _contents isn't
+            // NULL?
             libc::mprotect(_contents,
                            size,
                            libc::PROT_EXEC | libc::PROT_READ | libc::PROT_WRITE);
