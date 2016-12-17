@@ -48,7 +48,10 @@ fn i64_to_bytes(v: i64) -> Vec<u8> {
          ((v >> 24) & 0xff) as u8]
 }
 
+// We are lucky that we need only 4 registers and we can use r8 to r11. These registers
+// are encoded consecutively using 3 bits.
 fn reg_to_bits(r: String) -> u8 {
+    assert!(r == "a" || r == "b" || r == "c" || r == "d");
     let b = r.bytes().nth(0).unwrap();
     b - b'a' + 0xc0
 }
