@@ -4,5 +4,6 @@ version = "0.1.0"
 authors = ["Alok Menghrajani <alok@squareup.com>"]
 
 [dependencies]
+libc = "0.2.2"
 regex = "0.1.41"
 rust-crypto = "0.2.36"

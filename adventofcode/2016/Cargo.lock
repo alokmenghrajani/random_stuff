@@ -2,6 +2,7 @@
 name = "2016"
 version = "0.1.0"
 dependencies = [
+ "libc 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
  "rust-crypto 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
