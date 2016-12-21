@@ -15,9 +15,10 @@ pub fn solve(input: usize) {
 }
 
 struct CircularBuffer {
-    next: Vec<usize>,
-    prev: Vec<usize>, // we could do without prev...
+    next: Vec<Option<usize>>,
     curr: usize,
+    // the position for the opposite is next[opp]. We need one level of indirection so we can
+    // remove the opposite element.
     opp: usize,
     size: usize,
 }
@@ -25,71 +26,57 @@ struct CircularBuffer {
 impl CircularBuffer {
     fn new(size: usize) -> CircularBuffer {
         let mut next = Vec::with_capacity(size);
-        let mut prev = Vec::with_capacity(size);
         for i in 0..size {
-            next.push((i + 1) % size);
-            prev.push((i + size - 1) % size);
+            next.push(Some((i + 1) % size));
         }
         CircularBuffer {
             next: next,
-            prev: prev,
             curr: 0,
-            opp: size / 2,
+            opp: size / 2 - 1,
             size: size,
         }
     }
 
     fn remove_opp(&mut self) {
         assert!(self.size > 1);
-        let next = self.next[self.opp];
-        let prev = self.prev[self.opp];
-        self.next[prev] = next;
-        self.prev[next] = prev;
-        self.next[self.opp] = 0;
-        self.prev[self.opp] = 0;
-        if self.size % 2 == 0 {
-            self.opp = prev;
-        } else {
+        let remove = self.next[self.opp].unwrap();
+        let next = self.next[remove].unwrap();
+
+        self.next[self.opp] = Some(next);
+        self.next[remove] = None;
+        if self.size % 2 == 1 {
+            // move forward
             self.opp = next;
         }
+        self.curr = self.next[self.curr].unwrap();
         self.size -= 1;
     }
 
     fn remove_next(&mut self) {
         assert!(self.size > 1);
-        let remove = self.next[self.curr];
-        let next = self.next[remove];
-        let prev = self.prev[remove];
-        self.next[prev] = next;
-        self.prev[next] = prev;
-        self.next[remove] = 0;
-        self.prev[remove] = 0;
+        let remove = self.next[self.curr].unwrap();
+        let next = self.next[remove].unwrap();
+        self.next[self.curr] = Some(next);
+        self.next[remove] = None;
+        self.curr = self.next[self.curr].unwrap();
         self.size -= 1;
-    }
-
-    fn inc(&mut self) {
-        self.opp = self.next[self.opp];
-        self.curr = self.next[self.curr];
     }
 }
 
 fn part1(input: usize) -> usize {
-    _solve(input, true)
+    _solve(input, |x| x.remove_next())
 }
 
 fn part2(input: usize) -> usize {
-    _solve(input, false)
+    _solve(input, |x| x.remove_opp())
 }
 
-fn _solve(input: usize, part1: bool) -> usize {
+fn _solve<F>(input: usize, closure: F) -> usize
+    where F: Fn(&mut CircularBuffer) -> ()
+{
     let mut elves = CircularBuffer::new(input);
     for _ in 1..input {
-        if part1 {
-            elves.remove_next();
-        } else {
-            elves.remove_opp();
-        }
-        elves.inc();
+        closure(&mut elves);
     }
     elves.curr + 1
 }
