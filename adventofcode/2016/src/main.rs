@@ -16,10 +16,12 @@
  * - Peter Ruibal whose main.rs I stole.
  * - Matt McPherrin who reviewed some of this code and provided some useful feedback.
  */
-
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
+
+#[macro_use]
+extern crate lazy_static;
 
 mod day01;
 mod day02;

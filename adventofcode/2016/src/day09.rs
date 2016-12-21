@@ -1,4 +1,5 @@
 extern crate regex;
+
 use self::regex::Regex;
 
 pub fn solve(input: &str) {
@@ -27,24 +28,22 @@ fn part2(input: &str) -> usize {
 
 // Recursively compute the length of our input.
 fn _solve(input: &str, recursive: bool) -> usize {
-    // We are paying the cost of initializing these regular expressions each time the function
-    // gets called. Using static is currently a little painful (requires dealing with raw
-    // pointers). Eventually, it will all be easier with const fn.
-    let normal = Regex::new(r"^[A-Z]+").unwrap();
-    let repeat = Regex::new(r"^\((\d+)x(\d+)\)").unwrap();
-    let whitespace = Regex::new(r"^\s+").unwrap();
-
+    lazy_static! {
+            static ref NORMAL: Regex = Regex::new("^[A-Z]+").unwrap();
+            static ref REPEAT: Regex = Regex::new(r"^\((\d+)x(\d+)\)").unwrap();
+            static ref WHITESPACE: Regex = Regex::new(r"^\s+").unwrap();
+    }
     // Recursion ends when we have consumed the entire input.
     if input.len() == 0 {
         return 0;
     }
     // Check if we have a character in the A-Z range.
-    if let Some(n) = normal.captures(input) {
+    if let Some(n) = NORMAL.captures(input) {
         let l = n.at(0).unwrap().len();
         return l + _solve(&input[l..], recursive);
     }
     // Check if we have a repetition pattern.
-    if let Some(r) = repeat.captures(input) {
+    if let Some(r) = REPEAT.captures(input) {
         let skip = r.at(0).unwrap().len();
         let t: usize = r.at(1).unwrap().parse().unwrap();
         let c: usize = r.at(2).unwrap().parse().unwrap();
@@ -59,7 +58,7 @@ fn _solve(input: &str, recursive: bool) -> usize {
         }
     }
     // Ignore whitespaces
-    if whitespace.is_match(input) {
+    if WHITESPACE.is_match(input) {
         return 0;
     }
     panic!("unexpected input");
