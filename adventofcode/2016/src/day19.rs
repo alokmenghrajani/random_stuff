@@ -64,19 +64,17 @@ impl CircularBuffer {
 }
 
 fn part1(input: usize) -> usize {
-    _solve(input, |x| x.remove_next())
+    let mut elves = CircularBuffer::new(input);
+    for _ in 1..input {
+        elves.remove_next();
+    }
+    elves.curr + 1
 }
 
 fn part2(input: usize) -> usize {
-    _solve(input, |x| x.remove_opp())
-}
-
-fn _solve<F>(input: usize, closure: F) -> usize
-    where F: Fn(&mut CircularBuffer) -> ()
-{
     let mut elves = CircularBuffer::new(input);
     for _ in 1..input {
-        closure(&mut elves);
+        elves.remove_opp();
     }
     elves.curr + 1
 }
