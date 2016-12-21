@@ -3,7 +3,13 @@ extern crate regex;
 use self::regex::Regex;
 
 // This puzzle can be solved by using the right data structure and merging overlapping ranges of
-// numbers. I however figured there's a slighly less efficient but much simpler approach.
+// numbers. I however picked a less efficient but much simpler approach:
+// Starting from the min value, keep incrementing a counter i. If there's a [lower-upper] range,
+// such that lower <= i <= upper, then update the counter's value to be upper+1. Otherwise, i is
+// one of the whitelisted values we are interested in.
+//
+// This implementation uses an iterator, which allows nice and efficient code reuse between the
+// two parts.
 pub fn solve(input: &str) {
     let test_input = "5-8\n0-2\n4-7";
     assert_eq!(part1(test_input, 0, 9), 3);
@@ -23,17 +29,17 @@ impl Iterator for Day20Iterator {
     type Item = isize;
 
     fn next(&mut self) -> Option<isize> {
-        'outer: while self.i <= self.max {
-            for bound in self.ranges.iter() {
-                let (lower, upper) = *bound;
-                if lower <= self.i && self.i <= upper {
-                    self.i = upper + 1;
-                    continue 'outer;
-                }
+        while self.i <= self.max {
+            if let Some(&(_, upper)) =
+                self.ranges
+                    .iter()
+                    .find(|bounds| bounds.0 <= self.i && self.i <= bounds.1) {
+                self.i = upper + 1;
+            } else {
+                let r = Some(self.i);
+                self.i += 1;
+                return r;
             }
-            let r = Some(self.i);
-            self.i += 1;
-            return r;
         }
         None
     }
