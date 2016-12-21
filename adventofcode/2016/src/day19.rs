@@ -15,8 +15,11 @@ pub fn solve(input: usize) {
 }
 
 struct CircularBuffer {
+    // nit: we could set the element to the length of the vector and trigger an overflow if we
+    // accidentally access a deleted item. I however think it's cleaner to use an Option type.
     next: Vec<Option<usize>>,
     curr: usize,
+
     // the position for the opposite is next[opp]. We need one level of indirection so we can
     // remove the opposite element.
     opp: usize,
