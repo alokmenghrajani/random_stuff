@@ -4,7 +4,9 @@
 //
 // Note: this puzzle is very similar to https://en.wikipedia.org/wiki/Josephus_problem. The first
 // part can be solved without a computer using some pure math. I'm not too sure about the second
-// part.
+// part. If you want to learn more about this puzzle (and lots of other interesting math stuff),
+// check out Donald E Knuth's book: Concrete Mathematics
+// https://notendur.hi.is/pgg/(ebook-pdf)%20-%20Mathematics%20-%20Concrete%20Mathematics.pdf
 
 pub fn solve(input: usize) {
     assert_eq!(part1(5), 3);
