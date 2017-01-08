@@ -1,3 +1,5 @@
+#![feature(asm)]
+
 /**
  * Advent of code is an annual programming challenge hosted by Eric Wastl.
  *
@@ -16,6 +18,7 @@
  * - Peter Ruibal whose main.rs I stole.
  * - Matt McPherrin who reviewed some of this code and provided some useful feedback.
  */
+
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
@@ -33,8 +36,9 @@ mod day07;
 mod day08;
 mod day09;
 mod day10;
-// todo: clean up and post previous days...
+// todo: day11
 mod day12;
+// todo: day13
 mod day14;
 mod day15;
 mod day16;
@@ -43,6 +47,10 @@ mod day18;
 mod day19;
 mod day20;
 mod day21;
+// todo: day22
+mod day23;
+// todo: day24
+// todo: day25
 
 // Loads the file ./input/<number>. The input files are unique to each person.
 // All the inputs seem to be ascii, it might be more efficient to use [u8]?
@@ -88,6 +96,7 @@ fn main() {
         19 => day19::solve(3005290),
         20 => day20::solve(&grab_local_input(day)),
         21 => day21::solve(&grab_local_input(day), "abcdefgh", "fbgdceah"),
+        23 => day23::solve(&grab_local_input(day)),
         _ => panic!("Day {} not implemented", day),
     };
 }
