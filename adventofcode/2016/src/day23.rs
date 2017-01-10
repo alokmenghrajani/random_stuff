@@ -33,10 +33,15 @@ use std::ops::{Index, IndexMut};
 pub fn solve(input: &str) {
     let test_input = "cpy 2 a\ntgl a\ntgl a\ntgl a\ncpy 1 a\ndec a\ndec a";
     assert_eq!(_solve(test_input, (0, 0, 0, 0)), 3);
-    println!("test_input ok");
 
     println!("part 1: {}", _solve(input, (7, 0, 0, 0)));
-    // println!("part 2: {}", _solve(input, (0, 0, 1, 0)));
+    println!("part 2: {}", _solve(input, (12, 0, 0, 0)));
+}
+
+#[derive(Debug, Clone)]
+struct CmdOffset {
+    cmd: Cmd,
+    offset: usize,
 }
 
 // Normally, compilers use multiple intermediate representations. Our input language is close
@@ -57,17 +62,14 @@ enum Arg {
     Register(u8),
 }
 
-#[derive(Debug, Clone)]
-struct CmdOffset {
-    cmd: Cmd,
-    offset: usize,
-}
-
-fn print_cmds(cmds: &Vec<CmdOffset>) {
-    for i in 0..cmds.len() {
-        println!("{} {:x} {:?}", i, cmds[i].offset, cmds[i].cmd);
-    }
-}
+/**
+ * For debugging purpose...
+ */
+// fn print_cmds(cmds: &Vec<CmdOffset>) {
+//     for i in 0..cmds.len() {
+//         println!("{} {:x} {:?}", i, cmds[i].offset, cmds[i].cmd);
+//     }
+// }
 
 fn i64_to_bytes(v: i64) -> Vec<u8> {
     vec![(v & 0xff) as u8,
@@ -186,9 +188,9 @@ fn get_bytes(cmd: CmdOffset, offset: usize, offsets: &Vec<CmdOffset>) -> Vec<u8>
 
 /**
  * We call into the jmp_handler when a jnz has a register as the offset argument. We need
- * to look at the cmds data structure and figure out where we want to jump to.
+ * to look at the CMDS data structure and map the command offset to an address.
  */
-extern "C" fn jmp_handler(arg: i64) -> u64 {
+extern "C" fn jmp_handler(arg: isize) -> u64 {
     unsafe {
         asm!("push %r8");
         asm!("push %r9");
@@ -196,7 +198,7 @@ extern "C" fn jmp_handler(arg: i64) -> u64 {
         asm!("push %r11");
     }
 
-    println!("Handling jmp arg={}", arg);
+    // println!("Handling jmp arg={}", arg);
 
     // Find current address by looking at the return address on the stack.
     let addr: u64;
@@ -206,22 +208,22 @@ extern "C" fn jmp_handler(arg: i64) -> u64 {
     // Find which instruction this maps to. We need to add 2, because there's a "jmp rax" in the
     // JITed code. If we can't find the instruction, we jump to the last instruction (nop).
     let base = JIT_MEMORY.with(|jit| jit.borrow().contents as u64);
-    let dest_cmd_offset = CMDS.with(|cmds| {
-        println!("HERE");
+    let current_cmd_offset = CMDS.with(|cmds| {
         let cmds = cmds.borrow();
-        if let Some(item) = cmds.iter().position(|x| x.offset as u64 == addr + 2 - base) {
-            if item + arg as usize >= cmds.len() {
-                cmds.len() - 1
-            } else {
-                item + arg as usize
-            }
-        } else {
-            cmds.len() - 1
-        }
+        let item = cmds.iter().position(|x| x.offset as u64 == addr + 2 - base).unwrap();
+        (item - 1) as isize
     });
-    println!("here: {}", dest_cmd_offset);
-    let r = CMDS.with(|cmds| cmds.borrow()[dest_cmd_offset].offset) + base as usize;
-    println!("Handling jmp arg={}, addr={}, base={:?}, r={}", arg, addr, base, r);
+    // println!("current pc: {}", current_cmd_offset);
+    let num_commands = CMDS.with(|cmds| cmds.borrow().len() as isize);
+    let dest_cmd_offset = if (current_cmd_offset + arg < 0) ||
+                             (current_cmd_offset + arg >= num_commands) {
+        num_commands - 1
+    } else {
+        current_cmd_offset + arg
+    };
+    // println!("here: {}", dest_cmd_offset);
+    let r = CMDS.with(|cmds| cmds.borrow()[dest_cmd_offset as usize].offset) + base as usize;
+    // println!("Handling jmp arg={}, addr={}, base={:?}, r={}", arg, addr, base, r);
 
     unsafe {
         asm!("pop %r11");
@@ -232,7 +234,7 @@ extern "C" fn jmp_handler(arg: i64) -> u64 {
     r as u64
 }
 
-extern "C" fn toggle_handler(arg: u64) {
+extern "C" fn toggle_handler(arg: isize) {
     unsafe {
         asm!("push %r8");
         asm!("push %r9");
@@ -240,7 +242,7 @@ extern "C" fn toggle_handler(arg: u64) {
         asm!("push %r11");
     }
 
-    println!("Handling tgl {}", arg);
+    // println!("Handling tgl {}", arg);
 
     // Find current address by looking at the return address on the stack.
     let addr: u64;
@@ -252,37 +254,39 @@ extern "C" fn toggle_handler(arg: u64) {
     let current_cmd_offset = CMDS.with(|cmds| {
         let cmds = cmds.borrow();
         let item = cmds.iter().position(|x| x.offset as u64 == addr - base).unwrap();
-        item - 1
+        (item - 1) as isize
     });
-    println!("here: {}", current_cmd_offset);
+    // println!("here: {}", current_cmd_offset);
 
     // modify current_cmd_offset + arg.
 
-    let cmd_offset = current_cmd_offset + arg as usize;
-    println!("cmd_offset {}", cmd_offset);
+    let cmd_offset = current_cmd_offset + arg;
+    // println!("cmd_offset {}", cmd_offset);
     CMDS.with(|cmds| {
         let mut cmds = cmds.borrow_mut();
-        let cmd = cmds[cmd_offset].cmd.clone();
-        let new_cmd = match cmd.clone() {
-            Cmd::Inc(a) => Cmd::Dec(a),
-            Cmd::Tgl(a) | Cmd::Dec(a) => Cmd::Inc(a),
-            Cmd::Jnz(a, b) => Cmd::Cpy(a, b),
-            Cmd::Cpy(a, b) => Cmd::Jnz(a, b),
-            Cmd::Nop => Cmd::Nop,
-        };
-        cmds[cmd_offset].cmd = new_cmd.clone();
-        println!("before: {:?}, now: {:?}", cmd, new_cmd);
+        if (cmd_offset >= 0) && (cmd_offset < cmds.len() as isize) {
+            let cmd = cmds[cmd_offset as usize].cmd.clone();
+            let new_cmd = match cmd.clone() {
+                Cmd::Inc(a) => Cmd::Dec(a),
+                Cmd::Tgl(a) | Cmd::Dec(a) => Cmd::Inc(a),
+                Cmd::Jnz(a, b) => Cmd::Cpy(a, b),
+                Cmd::Cpy(a, b) => Cmd::Jnz(a, b),
+                Cmd::Nop => Cmd::Nop,
+            };
+            cmds[cmd_offset as usize].cmd = new_cmd.clone();
+            // println!("before: {:?}, now: {:?}", cmd, new_cmd);
+        }
     });
 
     // Re-jit the code.
     emit_machine_code();
-    // print_cmds crashes for some reason?
     // CMDS.with(|cmds| print_cmds(&cmds.borrow()));
 
     // look up the new address for current_cmd_offset+1
-    println!("old address: {}", addr);
-    let new_addr = CMDS.with(|cmds| cmds.borrow()[current_cmd_offset + 1].offset) + base as usize;
-    println!("new address: {}", new_addr);
+    // println!("old address: {}", addr);
+    let new_addr = CMDS.with(|cmds| cmds.borrow()[(current_cmd_offset + 1) as usize].offset) +
+                   base as usize;
+    // println!("new address: {}", new_addr);
 
     unsafe {
         asm!("mov $0, 8(%rbp)" :: "r"(new_addr));
@@ -380,14 +384,14 @@ fn _solve(input: &str, (reg_a, reg_b, reg_c, reg_d): (i64, i64, i64, i64)) -> i6
 
     // We don't need to save any registers because we only use eax and r8-r11
     emit_machine_code();
-    CMDS.with(|cmds| print_cmds(&cmds.borrow()));
+    // CMDS.with(|cmds| print_cmds(&cmds.borrow()));
 
     // Jump into code.
     let addr = JIT_MEMORY.with(|jit| {
         let j = jit.borrow();
         j.contents
     });
-    println!("base addr: {:?}", addr);
+    // println!("base addr: {:?}", addr);
     let fun: fn() -> i64 = unsafe { mem::transmute(addr) };
     debug_me(fun)
 }
@@ -420,7 +424,6 @@ fn emit_machine_code() {
         // note: we never bother to free our buffer.
         let n_pages = (bytes.len() as f64 / PAGE_SIZE as f64).ceil() as usize;
         if n_pages > N_PAGES {
-            println!("increase N_PAGES!");
             panic!("increase N_PAGES!");
         }
     });
