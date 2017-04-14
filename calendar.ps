@@ -1,0 +1,40 @@
+%!PS
+/MonthName
+[
+(Jan) (Feb) (Mar) (Apr)
+(May) (Jun) (Jul) (Aug)
+(Sep) (Oct) (Nov) (Dec)
+] def
+
+% <A> <str> strcat <substr>
+% convert each element of array <A> to string and concatenate
+% them in a substring of string <str>
+/strcat
+{ 0 3 2 roll % <str> <pos> <A>
+{
+2 index length 2 index sub % <str> <pos> A[i] <freelen>
+exch 4 copy pop getinterval % <str> <pos> <freelen> A[i] <free>
+1 index type /stringtype ne
+{ cvs }{ copy } ifelse % <str> <pos> <freelen> <buf>
+length exch pop add % <str> <pos'>
+} forall
+0 exch getinterval
+} bind def
+
+20 20 moveto
+/Helvetica findfont 30 scalefont setfont
+
+{ [ (%Calendar%) currentdevparams
+} stopped
+{ cleartomark (no clock)
+}{
+begin
+Hour (:) Minute (:) Second ( )
+Day ( ) MonthName Month get ( ) Year
+end ]
+50 string strcat
+} ifelse
+show
+
+showpage
+%%EOF
