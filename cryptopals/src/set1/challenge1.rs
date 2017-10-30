@@ -82,7 +82,7 @@ fn bits_to_b64(a: Vec<u8>) -> char {
     return b64.nth(n as usize).unwrap();
 }
 
-fn unhex(input: &str) -> Vec<u8> {
+pub fn unhex(input: &str) -> Vec<u8> {
     let mut r = Vec::new();
     if input.len() % 2 != 0 {
         panic!("input length should be a multiple of 2: {}", input)

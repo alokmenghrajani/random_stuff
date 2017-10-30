@@ -19,11 +19,12 @@ fn main() {
     // inference which type we want to parse the String into because a String can be parsed into
     // many different types.
     let set: u8 = argv[1].parse().expect("Set must be a number");
-    let challenge: u8 = argv[1].parse().expect("Challenge must be a number");
+    let challenge: u8 = argv[2].parse().expect("Challenge must be a number");
     println!("Running set {}, challenge {}", set, challenge);
 
     match (set, challenge) {
         (1, 1) => set1::challenge1::run(),
+        (1, 2) => set1::challenge2::run(),
         _ => panic!("Not implemented"),
     };
 }
