@@ -25,6 +25,7 @@ fn main() {
     match (set, challenge) {
         (1, 1) => set1::challenge1::run(),
         (1, 2) => set1::challenge2::run(),
+        (1, 3) => set1::challenge3::run(),
         _ => panic!("Not implemented"),
     };
 }
