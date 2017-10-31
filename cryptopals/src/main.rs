@@ -23,9 +23,11 @@ fn main() {
     println!("Running set {}, challenge {}", set, challenge);
 
     match (set, challenge) {
+        // Set 1
         (1, 1) => set1::challenge1::run(),
         (1, 2) => set1::challenge2::run(),
         (1, 3) => set1::challenge3::run(),
+        (1, 4) => set1::challenge4::run(),
         _ => panic!("Not implemented"),
     };
 }

@@ -26,14 +26,14 @@ pub fn run() {
     println!("{}", b);
 }
 
-fn ascii_score(input: &Vec<u8>) -> u64 {
-    return input.iter().fold(0, |acc, x| if (*x >= 65) && (*x <= 122) {
+pub fn ascii_score(input: &Vec<u8>) -> u64 {
+    return input.iter().fold(0, |acc, x| if *x == 32 || ((*x >= 65) && (*x <= 122)) {
         return acc + 1;
     } else {
         return acc;
     });
 }
 
-fn single_byte_xor(input1: &Vec<u8>, input2: u8) -> Vec<u8> {
+pub fn single_byte_xor(input1: &Vec<u8>, input2: u8) -> Vec<u8> {
     return input1.iter().map(|x| x ^ input2).collect();
 }
