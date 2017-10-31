@@ -37,7 +37,7 @@ fn xor(input1: &Vec<u8>, input2: &Vec<u8>) -> Vec<u8> {
     return r;
 }
 
-fn hex(input: &Vec<u8>) -> String {
+pub fn hex(input: &Vec<u8>) -> String {
     let mut r = String::new();
     for i in input {
         r.push(four_bits_to_hex(*i >> 4));
