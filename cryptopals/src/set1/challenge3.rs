@@ -9,10 +9,10 @@
  *
  * How? Devise some method for "scoring" a piece of English plaintext. Character frequency is a good metric. Evaluate each output and choose the one with the best score.
  */
-use set1::challenge1::unhex;
+use utils::hex::hex_decode;
 
 pub fn run() {
-    let input = unhex("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
+    let input = hex_decode("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
     let mut best = (0, Vec::new());
     for i in 0..256 {
         let a = single_byte_xor(&input, i as u8);

@@ -18,14 +18,14 @@
  * wasting your time with this.
  */
 
-use set1::challenge2::hex;
+use utils::hex::hex_encode;
 
 pub fn run() {
     let input1 = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
     let input2 = "ICE";
     let a = repeated_xor(&String::from(input1).into_bytes(),
                          &String::from(input2).into_bytes());
-    let b = hex(&a);
+    let b = hex_encode(&a);
     println!("repeating_xor result: {}", b);
     assert_eq!(b,
                "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f");

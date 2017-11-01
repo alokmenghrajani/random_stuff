@@ -5,6 +5,7 @@
 use std::env;
 
 mod set1;
+mod utils;
 
 fn main() {
     // You could simply do `let argv = env::args();` here, but then you can't use square brackets
@@ -29,6 +30,7 @@ fn main() {
         (1, 3) => set1::challenge3::run(),
         (1, 4) => set1::challenge4::run(),
         (1, 5) => set1::challenge5::run(),
+        (1, 6) => set1::challenge6::run(),
         _ => panic!("Not implemented"),
     };
 }
