@@ -7,6 +7,8 @@ use std::env;
 mod set1;
 mod utils;
 
+extern crate crypto;
+
 fn main() {
     // You could simply do `let argv = env::args();` here, but then you can't use square brackets
     // to access elements. Using argv.nth(1) gives you back an Option<String> which must then be
@@ -31,6 +33,7 @@ fn main() {
         (1, 4) => set1::challenge4::run(),
         (1, 5) => set1::challenge5::run(),
         (1, 6) => set1::challenge6::run(),
+        (1, 7) => set1::challenge7::run(),
         _ => panic!("Not implemented"),
     };
 }
