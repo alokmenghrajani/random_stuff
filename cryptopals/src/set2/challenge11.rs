@@ -37,7 +37,7 @@ pub fn run() {
 
     for _ in 0..n {
         let (m, ciphertext) = encrypt_with_random_key(repeated_text.as_bytes());
-        let g = guess(&ciphertext);
+        let g = guess_mode(&ciphertext);
         println!("{:?} {:?}", m, g);
         if m == g {
             ok += 1;
@@ -47,12 +47,12 @@ pub fn run() {
 }
 
 #[derive(Debug, PartialEq)]
-enum Mode {
+pub enum Mode {
     ECB,
     CBC,
 }
 
-fn guess(input: &[u8]) -> Mode {
+pub fn guess_mode(input: &[u8]) -> Mode {
     let mut blocks = HashSet::new();
     let l = hex_encode(input);
     for block in l.as_bytes().chunks(32) {

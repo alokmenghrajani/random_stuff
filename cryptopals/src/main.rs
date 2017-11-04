@@ -40,6 +40,7 @@ fn main() {
         (2, 9) => set2::challenge9::run(),
         (2, 10) => set2::challenge10::run(),
         (2, 11) => set2::challenge11::run(),
+        (2, 12) => set2::challenge12::run(),
         _ => panic!("Not implemented"),
     };
 }
