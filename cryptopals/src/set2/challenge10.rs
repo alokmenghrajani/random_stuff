@@ -26,19 +26,6 @@ use std::fs::File;
 use std::io::BufReader;
 
 pub fn run() {
-    // CBC encryption:
-    //      plain 0     plain 1     ...
-    //         |           |
-    //         v           v
-    // iv --> xor   ----> xor   --> ...
-    //         |   |       |   |
-    //         v   |       v   |
-    //   K -> AES  | K -> AES  |
-    //         |   |       |   |
-    //         |---        |---
-    //         v           v
-    //       enc 0       enc 1      ...
-
     let iv: [u8; 16] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6];
     let key: &[u8] = "SUPER SECRET....".as_bytes();
     let plaintext = "Some long, random, string that we'll encrypt and decrypt. Magically padded \
