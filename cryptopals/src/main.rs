@@ -9,6 +9,7 @@ mod set2;
 mod utils;
 
 extern crate crypto;
+extern crate rand;
 
 fn main() {
     // You could simply do `let argv = env::args();` here, but then you can't use square brackets
@@ -38,6 +39,7 @@ fn main() {
         (1, 8) => set1::challenge8::run(),
         (2, 9) => set2::challenge9::run(),
         (2, 10) => set2::challenge10::run(),
+        (2, 11) => set2::challenge11::run(),
         _ => panic!("Not implemented"),
     };
 }

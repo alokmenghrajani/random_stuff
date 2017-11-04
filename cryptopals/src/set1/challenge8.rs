@@ -23,7 +23,7 @@ pub fn run() {
         let line = line.unwrap();
         let mut blocks = HashSet::new();
         let l = line.clone().into_bytes();
-        for block in l.chunks(16) {
+        for block in l.chunks(32) {
             let substr: String = String::from_utf8(block.to_vec()).unwrap();
             if blocks.contains(&substr) {
                 println!("Contains dups: {}", line);

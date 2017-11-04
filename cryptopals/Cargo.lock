@@ -2,6 +2,7 @@
 name = "cryptopals"
 version = "0.0.1"
 dependencies = [
+ "rand 0.3.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "rust-crypto 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
