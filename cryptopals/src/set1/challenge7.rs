@@ -12,7 +12,6 @@
  * Easiest way: use OpenSSL::Cipher and give it AES-128-ECB as the cipher.
  */
 
-
 use utils::base64::base64_decode;
 
 use std::io::prelude::*;

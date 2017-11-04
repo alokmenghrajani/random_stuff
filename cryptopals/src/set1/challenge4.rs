@@ -7,7 +7,7 @@
  * (Your code from #3 should help.)
  */
 use utils::hex::hex_decode;
-use set1::challenge3::single_byte_xor;
+use utils::xor::xor;
 use set1::challenge3::ascii_score;
 use std::io::prelude::*;
 use std::io::BufReader;
@@ -22,7 +22,7 @@ pub fn run() {
     for line in lines {
         let input = hex_decode(line.unwrap().as_str());
         for i in 0..256 {
-            let a = single_byte_xor(&input, i as u8);
+            let a = xor(&input, &[i as u8]);
             let b = ascii_score(&a);
             if b > best.0 {
                 best = (b, a);

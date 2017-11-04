@@ -15,7 +15,7 @@
  */
 
 use utils::base64::base64_decode;
-use set1::challenge3::single_byte_xor;
+use utils::xor::xor;
 use set1::challenge5::repeated_xor;
 
 use std::io::prelude::*;
@@ -71,7 +71,7 @@ pub fn run() {
         }
         let mut best = (f32::MAX, 257);
         for k in 0..256 {
-            let e = single_byte_xor(&d, k as u8);
+            let e = xor(&d, &[k as u8]);
             let f = histogram(&e[..]);
             let score = histogram_diff(hist, f);
             if score < best.0 {
