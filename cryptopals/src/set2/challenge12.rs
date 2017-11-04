@@ -60,21 +60,27 @@ pub fn run() {
     // .unk nown      vs now* unkn own#
     //         ^
 
-    // the stopping condition is when we have decrypted every byte.
+    // calculate the plaintext size by seeing how many bytes we can add before we hit the next
+    // block.
+    let mut buffer = Vec::new();
+    let initial_size = oracle(&buffer).len();
+    while oracle(&buffer).len() == initial_size {
+        buffer.push(0);
+    }
+    let plaintext_size = initial_size - buffer.len();
+    println!("plaintext size: {}", plaintext_size);
+
     let mut plaintext = Vec::new();
-    let blocks_to_break = oracle(&plaintext).len() / 16;
 
     // this code is pretty ugly...
     let mut block2 = Vec::new();
     for _ in 0..16 {
         block2.push('a' as u8);
     }
-    for block_to_break in 0..blocks_to_break {
+    let mut block_to_break = 0;
+    loop {
         for i in 0..16 {
-            println!("cracking char {} in block {} of {}",
-                     i,
-                     block_to_break,
-                     blocks_to_break);
+            println!("char {} in block {}", i, block_to_break);
             let mut block1 = Vec::new();
             for _ in 0..(15 - i) {
                 block1.push('a' as u8);
@@ -90,7 +96,14 @@ pub fn run() {
                 let t2 = t1.chunks(16).nth(0).unwrap();
                 if t2 == target {
                     found = true;
+                    println!("  {} {}", c as u8 as char, c);
                     plaintext.push(c as u8);
+                    if plaintext.len() == plaintext_size {
+                        println!("");
+                        let s: String = plaintext.into_iter().map(|x| x as char).collect();
+                        println!("{}", s);
+                        return;
+                    }
                     block2.remove(0);
                     block2.push(0);
                     break;
@@ -102,6 +115,7 @@ pub fn run() {
                 panic!("search failed!");
             }
         }
+        block_to_break += 1;
     }
 }
 
@@ -138,65 +152,3 @@ fn oracle(input: &[u8]) -> Vec<u8> {
 
     return aes_ecb_encrypt(&key, &plaintext);
 }
-//     let n = 100;
-//     let mut ok = 0;
-//     let repeated_text = "yellow submarineyellow submarineyellow submarine";
-//
-//     for _ in 0..n {
-//         let (m, ciphertext) = encrypt_with_random_key(repeated_text.as_bytes());
-//         let g = guess(&ciphertext);
-//         println!("{:?} {:?}", m, g);
-//         if m == g {
-//             ok += 1;
-//         }
-//     }
-//     println!("result: {} / {}", ok, n);
-// }
-//
-
-
-// fn guess(input: &[u8]) -> Mode {
-//     let mut blocks = HashSet::new();
-//     let l = hex_encode(input);
-//     for block in l.as_bytes().chunks(32) {
-//         let substr: String = String::from_utf8(block.to_vec()).unwrap();
-//         if blocks.contains(&substr) {
-//             return Mode::ECB;
-//         }
-//         blocks.insert(substr);
-//     }
-//     return Mode::CBC;
-// }
-//
-// fn encrypt_with_random_key(input: &[u8]) -> (Mode, Vec<u8>) {
-//     let mut rng = rand::thread_rng();
-//
-//     // generate a random key
-//     let mut key = [0; 16];
-//     rng.fill_bytes(&mut key);
-//
-//     // prepend random bytes (5-10)
-//     let mut plaintext = Vec::new();
-//     let n = rng.next_u32() % 5 + 5;
-//     for _ in 0..n {
-//         plaintext.push(rng.gen());
-//     }
-//
-//     // copy choosen input
-//     plaintext.append(&mut input.to_vec());
-//
-//     // append random bytes (5-10)
-//     let n = rng.next_u32() % 5 + 5;
-//     for _ in 0..n {
-//         plaintext.push(rng.gen());
-//     }
-//
-//     // pick ECB or CBC
-//     if rng.gen() {
-//         return (Mode::ECB, aes_ecb_encrypt(&key, &plaintext));
-//     }
-//
-//     let mut iv = [0; 16];
-//     rng.fill_bytes(&mut iv);
-//     return (Mode::CBC, aes_cbc_encrypt(&key, &iv, &plaintext));
-// }
