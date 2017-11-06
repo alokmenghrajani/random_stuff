@@ -43,19 +43,35 @@ use utils::aes::aes_ecb_decrypt;
 use utils::hex::hex_decode;
 use utils::hex::hex_encode;
 
-use std::collections::BTreeMap;
+use std::collections::HashSet;
 
 pub fn run() {
     let t = from_string(String::from("foo=bar&baz=qux&zap=zazzle"));
     println!("{:?}", t);
     let t = profile_for(String::from("foo@bar.com"));
-    println!("plaintext profile: {}", t);
+    println!("profile: {:?}", t);
 
     let t = profile_for_encrypted(String::from("foo@bar.com"));
     println!("encrypted: {}", t);
 
     let t = decrypt(t);
     println!("decrypted: {}", t);
+
+    // build 3 strings, then pick the right chunks
+    let p1 = hex_decode(&profile_for_encrypted(String::from("xxxxxxxxxxadmin")));
+    let p2 = hex_decode(&profile_for_encrypted(String::from("xxxxxxxxxxxadmin")));
+    let p3 = hex_decode(&profile_for_encrypted(String::from("xxxxxxxxxxxxx")));
+
+    let mut r: Vec<u8> = Vec::new();
+    let p3 = p3.chunks(16).take(2);
+    let p1 = p1.chunks(16).skip(1).take(1);
+    let p2 = p2.chunks(16).skip(2).take(1);
+    for i in p3.chain(p1).chain(p2) {
+        r.extend(i);
+    }
+    let r = hex_encode(&r);
+    let r = decrypt(r);
+    println!("decrypted: {}", r);
 }
 
 fn decrypt(input: String) -> String {
@@ -71,22 +87,23 @@ fn profile_for_encrypted(input: String) -> String {
 }
 
 fn profile_for(input: String) -> String {
-    let mut r = BTreeMap::new();
+    let mut r = Vec::new();
     // disallow = and &
     let input = input.replace(|c| c == '=' || c == '&', "_");
-    r.insert(String::from("email"), input);
-    r.insert(String::from("uid"), String::from("10"));
-    r.insert(String::from("role"), String::from("user"));
+    r.push((String::from("email"), input));
+    r.push((String::from("uid"), String::from("10")));
+    r.push((String::from("role"), String::from("user")));
     return to_string(r);
 }
 
-fn to_string(input: BTreeMap<String, String>) -> String {
-    let t: Vec<String> = input.iter().map(|(k, v)| format!("{}={}", k, v)).collect();
+fn to_string(input: Vec<(String, String)>) -> String {
+    let t: Vec<String> = input.iter().map(|e| format!("{}={}", e.0, e.1)).collect();
     return t.join("&");
 }
 
-fn from_string(input: String) -> BTreeMap<String, String> {
-    let mut r = BTreeMap::new();
+fn from_string(input: String) -> Vec<(String, String)> {
+    let mut r = Vec::new();
+    let mut keys = HashSet::new();
     for pair in input.split('&') {
         let v: Vec<&str> = pair.split('=').collect();
         if v.len() != 2 {
@@ -94,11 +111,12 @@ fn from_string(input: String) -> BTreeMap<String, String> {
             continue;
         }
         let k = String::from(v[0]);
-        if r.contains_key(&k) {
+        if keys.contains(&k) {
             println!("from_string: duplicate key: {}", pair);
             continue;
         }
-        r.insert(k, String::from(v[1]));
+        keys.insert(k.clone());
+        r.push((k, String::from(v[1])));
     }
     return r;
 }
