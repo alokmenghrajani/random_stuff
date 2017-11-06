@@ -57,7 +57,20 @@ pub fn aes_ecb_encrypt(key: &[u8], plaintext: &[u8]) -> Vec<u8> {
     return r;
 }
 
+// Note: does not unpad data
+pub fn aes_ecb_decrypt(key: &[u8], ciphertext: &[u8]) -> Vec<u8> {
+    assert_eq!(key.len(), 16);
+    assert_eq!(ciphertext.len() % 16, 0);
+    let mut r = Vec::with_capacity(ciphertext.len());
+    for block in ciphertext.chunks(16) {
+        let p = aes_raw_decrypt(key, block);
+        r.extend(p);
+    }
+    return r;
+}
+
 pub fn aes_raw_encrypt(key: &[u8], plaintext: &[u8]) -> Vec<u8> {
+    assert_eq!(key.len(), 16);
     let aes_enc = aessafe::AesSafe128Encryptor::new(key);
     let mut r = [0; 16];
     aes_enc.encrypt_block(plaintext, &mut r);
