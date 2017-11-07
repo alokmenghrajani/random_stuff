@@ -29,7 +29,6 @@ pub fn run() {
     println!("guessing prefix padding...");
     let (prefix_padding, look_at) = guess_prefix_padding();
     println!("prefix_padding: {}, look_at: {}", prefix_padding, look_at);
-    assert_eq!(prefix_padding, 7);
     assert_eq!(look_at, 2);
 
     // confirm ecb
@@ -84,31 +83,34 @@ pub fn run() {
             let temp = oracle3(&block1, prefix_padding, look_at);
             let target = temp.chunks(16).nth(block_to_break).unwrap();
 
-            // iterate until we find the target
+            // iterate until we find the target. For some reason, we need to iterate multiple
+            // times.
             let mut found = false;
-            for c in 0..256 {
-                block2[15] = c as u8;
-                let t1 = oracle3(&block2, prefix_padding, look_at);
-                let t2 = t1.chunks(16).nth(0).unwrap();
-                if t2 == target {
-                    found = true;
-                    println!("  {} {}", c as u8 as char, c);
-                    plaintext.push(c as u8);
-                    if plaintext.len() == plaintext_size {
-                        println!("");
-                        let s: String = plaintext.into_iter().map(|x| x as char).collect();
-                        println!("{}", s);
-                        return;
+            while !found {
+                for c in 0..256 {
+                    block2[15] = c as u8;
+                    let t1 = oracle3(&block2, prefix_padding, look_at);
+                    let t2 = t1.chunks(16).nth(0).unwrap();
+                    if t2 == target {
+                        found = true;
+                        println!("  {} {}", c as u8 as char, c);
+                        plaintext.push(c as u8);
+                        if plaintext.len() == plaintext_size {
+                            println!("");
+                            let s: String =
+                                plaintext.clone().into_iter().map(|x| x as char).collect();
+                            println!("{}", s);
+                            return;
+                        }
+                        block2.remove(0);
+                        block2.push(0);
                     }
-                    block2.remove(0);
-                    block2.push(0);
-                    break;
                 }
-            }
-            if !found {
-                let s: String = plaintext.into_iter().map(|x| x as char).collect();
-                println!("{}", s);
-                panic!("search failed!");
+                if !found {
+                    let s: String = plaintext.clone().into_iter().map(|x| x as char).collect();
+                    println!("{}", s);
+                    println!("SEARCH FAILED!");
+                }
             }
         }
         block_to_break += 1;
