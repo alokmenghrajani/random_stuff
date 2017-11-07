@@ -13,7 +13,7 @@
  */
 
 use utils::base64::base64_decode;
-use utils::aes::aes_raw_decrypt;
+use utils::aes::aes_ecb_decrypt;
 
 use std::io::prelude::*;
 use std::fs::File;
@@ -29,10 +29,7 @@ pub fn run() {
     println!("{:?}", data);
 
     let key = "YELLOW SUBMARINE".as_bytes();
-    let mut final_result = Vec::with_capacity(data.len());
-    for block in data.chunks(16) {
-        final_result.extend(aes_raw_decrypt(&key, block));
-    }
-    let plaintext: String = final_result.into_iter().map(|x| x as char).collect();
+    let plaintext = aes_ecb_decrypt(&key, &data);
+    let plaintext: String = plaintext.into_iter().map(|x| x as char).collect();
     println!("{}", plaintext);
 }
