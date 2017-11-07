@@ -4,6 +4,18 @@ use crypto::aessafe;
 use crypto::symmetriccipher::BlockEncryptor;
 use crypto::symmetriccipher::BlockDecryptor;
 
+// CBC encryption:
+//      plain 0     plain 1     ...
+//         |           |
+//         v           v
+// iv --> xor   ----> xor   --> ...
+//         |   |       |   |
+//         v   |       v   |
+//   K -> AES  | K -> AES  |
+//         |   |       |   |
+//         |---        |---
+//         v           v
+//       enc 0       enc 1      ...
 pub fn aes_cbc_encrypt(iv: &[u8], key: &[u8], plaintext: &[u8]) -> Vec<u8> {
     assert_eq!(iv.len(), 16);
     assert_eq!(key.len(), 16);
@@ -18,18 +30,20 @@ pub fn aes_cbc_encrypt(iv: &[u8], key: &[u8], plaintext: &[u8]) -> Vec<u8> {
 
     return r;
 }
-// CBC encryption:
-//      plain 0     plain 1     ...
-//         |           |
-//         v           v
-// iv --> xor   ----> xor   --> ...
+
+// CBC decryption:
+//       enc 0       enc 1      ...
+//         |---        |---
 //         |   |       |   |
 //         v   |       v   |
 //   K -> AES  | K -> AES  |
 //         |   |       |   |
-//         |---        |---
+//         v   |       v   |
+// iv --> xor   ----> xor   --> ...
+//         |           |
+//         |           |
 //         v           v
-//       enc 0       enc 1      ...
+//      plain 0     plain 1     ...
 
 // Note: does not unpad data
 pub fn aes_cbc_decrypt(iv: &[u8], key: &[u8], ciphertext: &[u8]) -> Vec<u8> {
