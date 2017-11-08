@@ -63,7 +63,7 @@ pub fn run() {
     c[1][11] = c[1][11] ^ ('X' as u8) ^ (';' as u8);
     println!("after:  {:?}", c);
 
-    let new_ciphertext = hex_encode(flatten(&c));
+    let new_ciphertext = hex_encode(&flatten(c));
     let new_plaintext = decrypt(new_ciphertext);
     println!("{:?}", new_plaintext);
 }
