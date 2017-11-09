@@ -76,7 +76,6 @@ fn flatten(input: Vec<&mut [u8]>) -> Vec<u8> {
     return r;
 }
 
-
 fn encrypt(input: String) -> String {
     let key = hex_decode("cf358337dd4dfc1ddb710e30a1809e3f");
 

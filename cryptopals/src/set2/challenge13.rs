@@ -58,6 +58,16 @@ pub fn run() {
     println!("decrypted: {}", t);
 
     // build 3 strings, then pick the right chunks
+    // 1234567890123456
+    //                 1234567890123456
+    //                                 1234567890123456
+    // email=xxxxxxxxxxxxx&uid=10&role=user
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // email=xxxxxxxxxxadmin&uid=10&role=user
+    //                 ^^^^^^^^^^^^^^^^
+    // email=xxxxxxxxxxxadmin&uid=10&role=user
+    //                                 ^^^^^^^
+
     let p1 = hex_decode(&profile_for_encrypted(String::from("xxxxxxxxxxadmin")));
     let p2 = hex_decode(&profile_for_encrypted(String::from("xxxxxxxxxxxadmin")));
     let p3 = hex_decode(&profile_for_encrypted(String::from("xxxxxxxxxxxxx")));

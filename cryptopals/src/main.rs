@@ -6,6 +6,7 @@ use std::env;
 
 mod set1;
 mod set2;
+mod set3;
 mod utils;
 
 extern crate crypto;
@@ -47,6 +48,10 @@ fn main() {
         (2, 14) => set2::challenge14::run(),
         (2, 15) => set2::challenge15::run(),
         (2, 16) => set2::challenge16::run(),
+
+        // Set 3
+        (3, 17) => set3::challenge17::run(),
+
         _ => panic!("Not implemented"),
     };
 }
