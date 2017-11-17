@@ -73,9 +73,6 @@ use utils::hex::hex_decode;
 
 use set1::challenge3::ascii_score;
 
-use std::collections::HashMap;
-use std::collections::HashSet;
-
 pub fn run() {
     let inputs = ["SSBoYXZlIG1ldCB0aGVtIGF0IGNsb3NlIG9mIGRheQ==",
                   "Q29taW5nIHdpdGggdml2aWQgZmFjZXM=",
