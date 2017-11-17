@@ -7,7 +7,8 @@
  *
  * You can do this by hand. But don't: write code to do it for you.
  *
- * How? Devise some method for "scoring" a piece of English plaintext. Character frequency is a good metric. Evaluate each output and choose the one with the best score.
+ * How? Devise some method for "scoring" a piece of English plaintext. Character frequency is a
+ * good metric. Evaluate each output and choose the one with the best score.
  */
 use utils::hex::hex_decode;
 use utils::xor::xor;
@@ -28,7 +29,9 @@ pub fn run() {
 }
 
 pub fn ascii_score(input: &Vec<u8>) -> u64 {
-    return input.iter().fold(0, |acc, x| if *x == 32 || ((*x >= 65) && (*x <= 122)) {
+    return input.iter().fold(0, |acc, x| if *x == 32 ||
+                                         (((*x >= 65) && (*x <= 90)) ||
+                                          ((*x >= 97) && (*x <= 122))) {
         return acc + 1;
     } else {
         return acc;

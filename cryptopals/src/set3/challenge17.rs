@@ -58,7 +58,6 @@ use utils::aes::aes_cbc_decrypt;
 use utils::aes::aes_cbc_encrypt;
 use utils::base64::base64_decode;
 use utils::hex::hex_decode;
-use utils::hex::hex_encode;
 use utils::pkcs7::pkcs7_unpad;
 
 use rand::Rng;
