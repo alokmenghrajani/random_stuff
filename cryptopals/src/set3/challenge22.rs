@@ -109,28 +109,32 @@ pub fn run() {
 
 #[allow(non_snake_case)]
 fn mt_rand_first(seed: u32) -> u32 {
-    let mut state = [0; M + 1];
-    state[0] = seed;
     // half init
-    for i in 1..M + 1 {
-        let a = state[i - 1];
+    let mut a = seed;
+    let d = Wrapping(F) * Wrapping(a ^ (a >> (W - 2))) + Wrapping(1);
+    a = d.0;
+    let state_1 = a;
+    for i in 2..M {
         let d = Wrapping(F) * Wrapping(a ^ (a >> (W - 2))) + Wrapping(i as u32);
-        state[i] = d.0;
+        a = d.0;
     }
+    let d = Wrapping(F) * Wrapping(a ^ (a >> (W - 2))) + Wrapping(M as u32);
+    a = d.0;
+    let state_M = a;
+
     // twist only state[0]
-    let x = (Wrapping(state[0] & UPPER_MASK) + Wrapping(state[1] & LOWER_MASK)).0;
+    let x = (Wrapping(seed & UPPER_MASK) + Wrapping(state_1 & LOWER_MASK)).0;
     let mut xA = x >> 1;
     if (x % 2) != 0 {
         xA = xA ^ A;
     }
-    state[0] = state[M] ^ xA;
+    let y = state_M ^ xA;
 
     // usual logic
-    let mut y = state[0];
-    y = y ^ ((y >> U) & D);
-    y = y ^ ((y << S) & B);
-    y = y ^ ((y << T) & C);
-    y = y ^ (y >> L);
+    let y = y ^ ((y >> U) & D);
+    let y = y ^ ((y << S) & B);
+    let y = y ^ ((y << T) & C);
+    let y = y ^ (y >> L);
 
     return y;
 }
