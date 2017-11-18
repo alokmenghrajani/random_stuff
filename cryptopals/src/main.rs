@@ -9,9 +9,11 @@ mod set2;
 mod set3;
 mod utils;
 
+extern crate byteorder;
 extern crate crypto;
 extern crate rand;
-extern crate byteorder;
+extern crate time;
+extern crate num_cpus;
 
 fn main() {
     // You could simply do `let argv = env::args();` here, but then you can't use square brackets
@@ -56,6 +58,7 @@ fn main() {
         (3, 19) => set3::challenge19::run(),
         (3, 20) => set3::challenge20::run(),
         (3, 21) => set3::challenge21::run(),
+        (3, 22) => set3::challenge22::run(),
 
         _ => panic!("Not implemented"),
     };

@@ -4,6 +4,8 @@ version = "0.0.1"
 authors = ["Alok Menghrajani <alok@squareup.com>"]
 
 [dependencies]
+byteorder = "1.1.0"
+num_cpus = "1.0"
 rand = "0.3"
 rust-crypto = "^0.2"
-byteorder = "1.1.0"
+time = "0.1"

@@ -3,8 +3,10 @@ name = "cryptopals"
 version = "0.0.1"
 dependencies = [
  "byteorder 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "num_cpus 1.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.3.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "rust-crypto 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)",
+ "time 0.1.38 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -51,6 +53,14 @@ dependencies = [
 name = "libc"
 version = "0.2.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "num_cpus"
+version = "1.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "libc 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "rand"
@@ -112,6 +122,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum gcc 0.3.54 (registry+https://github.com/rust-lang/crates.io-index)" = "5e33ec290da0d127825013597dbdfc28bee4964690c7ce1166cbc2a7bd08b1bb"
 "checksum kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "7507624b29483431c0ba2d82aece8ca6cdba9382bff4ddd0f7490560c056098d"
 "checksum libc 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)" = "5ba3df4dcb460b9dfbd070d41c94c19209620c191b0340b929ce748a2bcd42d2"
+"checksum num_cpus 1.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "514f0d73e64be53ff320680ca671b64fe3fb91da01e1ae2ddc99eb51d453b20d"
 "checksum rand 0.3.17 (registry+https://github.com/rust-lang/crates.io-index)" = "61efcbcd9fa8d8fbb07c84e34a8af18a1ff177b449689ad38a6e9457ecc7b2ae"
 "checksum redox_syscall 0.1.31 (registry+https://github.com/rust-lang/crates.io-index)" = "8dde11f18c108289bef24469638a04dce49da56084f2d50618b226e47eb04509"
 "checksum rust-crypto 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)" = "f76d05d3993fd5f4af9434e8e436db163a12a9d40e1a58a726f27a01dfd12a2a"
