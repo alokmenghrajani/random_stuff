@@ -128,13 +128,13 @@ fn mt_rand_first(seed: u32) -> u32 {
     if (x % 2) != 0 {
         xA = xA ^ A;
     }
-    let y = state_M ^ xA;
+    let y1 = state_M ^ xA;
 
     // usual logic
-    let y = y ^ ((y >> U) & D);
-    let y = y ^ ((y << S) & B);
-    let y = y ^ ((y << T) & C);
-    let y = y ^ (y >> L);
+    let y2 = y1 ^ ((y1 >> U) & D);
+    let y3 = y2 ^ ((y2 << S) & B);
+    let y4 = y3 ^ ((y3 << T) & C);
+    let y5 = y4 ^ (y4 >> L);
 
-    return y;
+    return y5;
 }

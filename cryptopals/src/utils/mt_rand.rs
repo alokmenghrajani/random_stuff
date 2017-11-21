@@ -17,8 +17,8 @@ const LOWER_MASK: u32 = (1 << R) - 1;
 const UPPER_MASK: u32 = 1 << 31;
 
 pub struct MtRand {
-    state: [u32; N],
-    index: usize,
+    pub state: [u32; N],
+    pub index: usize,
 }
 
 impl MtRand {
@@ -41,14 +41,14 @@ impl MtRand {
             self.twist();
         }
 
-        let mut y = self.state[self.index];
-        y = y ^ ((y >> U) & D);
-        y = y ^ ((y << S) & B);
-        y = y ^ ((y << T) & C);
-        y = y ^ (y >> L);
+        let y1 = self.state[self.index];
+        let y2 = y1 ^ ((y1 >> U) & D);
+        let y3 = y2 ^ ((y2 << S) & B);
+        let y4 = y3 ^ ((y3 << T) & C);
+        let y5 = y4 ^ (y4 >> L);
 
         self.index += 1;
-        return y;
+        return y5;
     }
 
     #[allow(non_snake_case)]
