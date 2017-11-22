@@ -21,7 +21,7 @@ pub fn aes_ctr(key: &[u8], nonce: &[u8], input: &[u8]) -> Vec<u8> {
     assert_eq!(key.len(), 16);
     assert_eq!(nonce.len(), 8);
 
-    let mut num_blocks = ((input.len() + 16 - 1) / 16) as u64;
+    let num_blocks = ((input.len() + 16 - 1) / 16) as u64;
 
     // create the stream. TODO: make this a real stream?
     let mut s = Vec::with_capacity(num_blocks as usize * 16);

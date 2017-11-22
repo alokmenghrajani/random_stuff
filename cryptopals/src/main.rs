@@ -65,6 +65,7 @@ fn main() {
 
         // Set 4
         (4, 25) => set4::challenge25::run(),
+        (4, 26) => set4::challenge26::run(),
 
         _ => panic!("Not implemented"),
     };
