@@ -25,10 +25,7 @@ pub fn run() {
         let (ok, result) = decrypt(&c);
         println!("debug: {} {}", i, result);
         if ok {
-            println!("debug: {} {}{}",
-                     i,
-                     (0..i + 1).map(|_| ' ').collect::<String>(),
-                     (0..10).map(|_| '^').collect::<String>());
+            println!("debug: {} {}{}", i, " ".repeat(i + 1), "^".repeat(10));
             println!("Success!");
             return;
         }

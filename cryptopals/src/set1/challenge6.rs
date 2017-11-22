@@ -103,7 +103,7 @@ fn histogram(input: &[u8]) -> [f32; 256] {
         histogram[*i as usize] += 1.0;
     }
 
-    let sum = histogram.iter().sum();
+    let sum: f32 = histogram.iter().sum();
     for x in histogram.iter_mut() {
         *x /= sum;
     }
