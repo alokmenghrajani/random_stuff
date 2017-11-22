@@ -7,6 +7,7 @@ use std::env;
 mod set1;
 mod set2;
 mod set3;
+mod set4;
 mod utils;
 
 extern crate byteorder;
@@ -61,6 +62,9 @@ fn main() {
         (3, 22) => set3::challenge22::run(),
         (3, 23) => set3::challenge23::run(),
         (3, 24) => set3::challenge24::run(),
+
+        // Set 4
+        (4, 25) => set4::challenge25::run(),
 
         _ => panic!("Not implemented"),
     };
