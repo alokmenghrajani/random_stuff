@@ -28,6 +28,7 @@ pub struct Sha1 {
     state: Sha1State,
     blocks: Blocks,
     len: u64,
+    padding: bool,
 }
 
 struct Blocks {
@@ -70,8 +71,35 @@ impl Sha1 {
                 len: 0,
                 block: [0; 64],
             },
+            padding: true,
         }
     }
+
+    pub fn new_without_padding() -> Sha1 {
+        Sha1 {
+            state: DEFAULT_STATE,
+            len: 0,
+            blocks: Blocks {
+                len: 0,
+                block: [0; 64],
+            },
+            padding: false,
+        }
+    }
+
+    pub fn new_with_state(s: [u32; 5], l: u64) -> Sha1 {
+        assert!(l % 64 == 0);
+        Sha1 {
+            state: Sha1State { state: s },
+            len: l,
+            blocks: Blocks {
+                len: 0,
+                block: [0; 64],
+            },
+            padding: true,
+        }
+    }
+
 
     /// Resets the hash object to it's initial state.
     pub fn reset(&mut self) {
@@ -93,27 +121,29 @@ impl Sha1 {
     /// Retrieve digest result.
     pub fn digest(&self) -> Digest {
         let mut state = self.state;
-        let bits = (self.len + (self.blocks.len as u64)) * 8;
-        let extra = [(bits >> 56) as u8,
-                     (bits >> 48) as u8,
-                     (bits >> 40) as u8,
-                     (bits >> 32) as u8,
-                     (bits >> 24) as u8,
-                     (bits >> 16) as u8,
-                     (bits >> 8) as u8,
-                     (bits >> 0) as u8];
-        let mut last = [0; 128];
-        let blocklen = self.blocks.len as usize;
-        last[..blocklen].clone_from_slice(&self.blocks.block[..blocklen]);
-        last[blocklen] = 0x80;
+        if self.padding {
+            let bits = (self.len + (self.blocks.len as u64)) * 8;
+            let extra = [(bits >> 56) as u8,
+                         (bits >> 48) as u8,
+                         (bits >> 40) as u8,
+                         (bits >> 32) as u8,
+                         (bits >> 24) as u8,
+                         (bits >> 16) as u8,
+                         (bits >> 8) as u8,
+                         (bits >> 0) as u8];
+            let mut last = [0; 128];
+            let blocklen = self.blocks.len as usize;
+            last[..blocklen].clone_from_slice(&self.blocks.block[..blocklen]);
+            last[blocklen] = 0x80;
 
-        if blocklen < 56 {
-            last[56..64].clone_from_slice(&extra);
-            state.process(as_block(&last[0..64]));
-        } else {
-            last[120..128].clone_from_slice(&extra);
-            state.process(as_block(&last[0..64]));
-            state.process(as_block(&last[64..128]));
+            if blocklen < 56 {
+                last[56..64].clone_from_slice(&extra);
+                state.process(as_block(&last[0..64]));
+            } else {
+                last[120..128].clone_from_slice(&extra);
+                state.process(as_block(&last[0..64]));
+                state.process(as_block(&last[64..128]));
+            }
         }
 
         Digest { data: state }

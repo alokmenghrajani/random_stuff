@@ -34,7 +34,7 @@ pub fn run() {
     assert!(!verify_mac(&"hello porld".as_bytes(), &mac1));
 }
 
-fn gen_mac(message: &[u8]) -> Vec<u8> {
+pub fn gen_mac(message: &[u8]) -> Vec<u8> {
     let key = hex_decode("cf358337dd4dfc1ddb710e30a1809e3f");
     let mut sha1 = Sha1::new();
     sha1.update(&key);
@@ -42,7 +42,7 @@ fn gen_mac(message: &[u8]) -> Vec<u8> {
     return sha1.digest().bytes().to_vec();
 }
 
-fn verify_mac(message: &[u8], mac: &[u8]) -> bool {
+pub fn verify_mac(message: &[u8], mac: &[u8]) -> bool {
     let m = gen_mac(&message);
     return m == mac;
 }
