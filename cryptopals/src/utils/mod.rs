@@ -5,3 +5,4 @@ pub mod mt_rand;
 pub mod pkcs7;
 pub mod sha1;
 pub mod xor;
+pub mod md4;

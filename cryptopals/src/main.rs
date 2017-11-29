@@ -12,9 +12,15 @@ mod utils;
 
 extern crate byteorder;
 extern crate crypto;
+extern crate num_cpus;
 extern crate rand;
 extern crate time;
-extern crate num_cpus;
+
+extern crate fake_simd as simd;
+extern crate byte_tools;
+#[macro_use]
+extern crate digest;
+extern crate block_buffer;
 
 fn main() {
     // You could simply do `let argv = env::args();` here, but then you can't use square brackets
@@ -69,6 +75,7 @@ fn main() {
         (4, 27) => set4::challenge27::run(),
         (4, 28) => set4::challenge28::run(),
         (4, 29) => set4::challenge29::run(),
+        (4, 30) => set4::challenge30::run(),
 
         _ => panic!("Not implemented"),
     };
