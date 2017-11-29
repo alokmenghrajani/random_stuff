@@ -10,16 +10,19 @@ mod set3;
 mod set4;
 mod utils;
 
+extern crate block_buffer;
+extern crate byte_tools;
 extern crate byteorder;
 extern crate crypto;
-extern crate num_cpus;
-extern crate rand;
-extern crate time;
-
-extern crate fake_simd as simd;
-extern crate byte_tools;
 extern crate digest;
-extern crate block_buffer;
+extern crate fake_simd as simd;
+extern crate hyper;
+extern crate iron;
+extern crate num_cpus;
+extern crate params;
+extern crate rand;
+extern crate router;
+extern crate time;
 
 fn main() {
     // You could simply do `let argv = env::args();` here, but then you can't use square brackets
@@ -28,6 +31,9 @@ fn main() {
     let argv: Vec<String> = env::args().collect();
     if argv.len() != 3 {
         panic!("Usage: cargo run <set> <challenge>");
+    }
+    if argv[1] == "webserver" {
+        utils::webserver::start(argv[2].parse().expect("Failed to parse port"));
     }
 
     // In general, Rust can infer types for local variables. Here, we need to tell the type
@@ -75,6 +81,7 @@ fn main() {
         (4, 28) => set4::challenge28::run(),
         (4, 29) => set4::challenge29::run(),
         (4, 30) => set4::challenge30::run(),
+        (4, 31) => set4::challenge31::run(),
 
         _ => panic!("Not implemented"),
     };
