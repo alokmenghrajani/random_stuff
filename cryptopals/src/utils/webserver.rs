@@ -30,10 +30,10 @@ fn handle_slow(req: &mut Request) -> IronResult<Response> {
     let signature = get_param(req, "signature");
 
     let expected = hex_encode(&hmac_sha1(&key, file.as_bytes()));
-    println!("sleep={}, file={}, signature={}\n                     expected={}",
-             sleep,
+    println!("file={}, signature={}, sleep={}\n           expected={}",
              file,
              signature,
+             sleep,
              expected);
 
     if slow_compare(expected, signature, sleep) {
@@ -53,7 +53,9 @@ fn slow_compare(a: String, b: String, s: u64) -> bool {
         if a_bytes[i] != b_bytes[i] {
             return false;
         }
-        thread::sleep(time::Duration::from_millis(s));
+        if s > 0 {
+            thread::sleep(time::Duration::from_millis(s));
+        }
     }
     return true;
 }

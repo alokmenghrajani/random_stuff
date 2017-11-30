@@ -82,6 +82,7 @@ fn main() {
         (4, 29) => set4::challenge29::run(),
         (4, 30) => set4::challenge30::run(),
         (4, 31) => set4::challenge31::run(),
+        (4, 32) => set4::challenge32::run(),
 
         _ => panic!("Not implemented"),
     };
