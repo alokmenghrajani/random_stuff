@@ -37,6 +37,10 @@ use time;
 pub fn run() {
     // the URL I'm using is slightly different:
     // http://localhost:10000/slow?sleep=50&file=foo&signature=...
+    solve(50, 2);
+}
+
+pub fn solve(sleep: u32, iter: u32) {
     let client = Client::new();
     let mut signature = [b'.'; 40];
     let chars = "0123456789abcdef".as_bytes();
@@ -44,7 +48,7 @@ pub fn run() {
         let mut max = (0, 0);
         for j in 0..chars.len() {
             signature[i] = chars[j];
-            let (t, r) = get(&client, &signature);
+            let (t, r) = get(&client, &signature, sleep, iter);
             if r == true {
                 println!("success!");
                 break 'outer;
@@ -61,17 +65,22 @@ pub fn run() {
     println!("{}", s);
 }
 
-fn get(client: &Client, signature: &[u8]) -> (u64, bool) {
+fn get(client: &Client, signature: &[u8], sleep: u32, iter: u32) -> (u64, bool) {
     let s: String = signature.iter().map(|c| *c as char).collect();
-    let u = format!("http://localhost:10000/slow?sleep=50&file=foo&signature={}",
+    let u = format!("http://localhost:10000/slow?sleep={}&file=foo&signature={}",
+                    sleep,
                     s);
-    let before = time::precise_time_ns();
-    let res = client.get(&u)
-        .send()
-        .unwrap();
-    let t = time::precise_time_ns() - before;
-    if res.status == Ok {
-        return (t, true);
+    let mut t = 0;
+    for _ in 0..iter {
+        let before = time::precise_time_ns();
+        let res = client.get(&u)
+            .send()
+            .unwrap();
+        if res.status == Ok {
+            return (t, true);
+        }
+        let after = time::precise_time_ns();
+        t += after - before;
     }
     return (t, false);
 }
