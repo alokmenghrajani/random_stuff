@@ -13,7 +13,7 @@
 - [ ] board/card games
 - [ ] coffee maker, creamer, sugar + mug
 - [ ] clothespin
-- [ ] laudry bag
+- [ ] laundry bag
 - [ ] balls + frisbee
 - [ ] medecine, anti-allergy
 
